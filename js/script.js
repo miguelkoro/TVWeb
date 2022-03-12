@@ -1,3 +1,5 @@
+//#region ScreenSize
+/**SELECCIONAR TAMAÑO DE LA PANTALLA */
 class Size{constructor(name, multiplier, width, height){this.name=name; this.multiplier=multiplier; this.width=width; this.height=height;}}
 
 const screenSize=new Size('',0,0,0);
@@ -6,25 +8,26 @@ var sizes=[new Size('XS',2,512,256), new Size('S',3,768,384), new Size('M',4,102
 
 /** Seleccionamos la resolucion, comparandola con el ancho de la pantalla */
 function getResolution(){
-      for(var i=0; i<sizes.length-1; i++){ //Hay que reducir a uno porque el ultimo no tiene limite de anchura
-        if(innerWidth>sizes[i].width && innerWidth<sizes[i+1].width)
-            Object.assign(screenSize,sizes[i]);
-    }
-    if(innerWidth>sizes[sizes.length-1].width)Object.assign(screenSize,sizes[sizes.length-1]);  //El ultimo se hace manualmente
+    sizes.forEach((size)=>{
+        if(innerWidth>size.width )
+            Object.assign(screenSize,size);
+    })
 }
-getResolution(screenSize);
+getResolution();
 
-console.log(innerWidth);
-console.log(screenSize);
-
+//console.log(innerWidth);
+//console.log(screenSize);
+//#endregion
+//#region CanvasContext
 /**Creamos el contexto del canvas */
 var canvas = document.getElementById('canvas');
 var ctx= canvas.getContext('2d');
 /**Segun el tamaño de la pantalla seleccionado, configuramos el tamaño del canvas */
 ctx.canvas.width=screenSize.width;
 ctx.canvas.height=screenSize.height;
+//#endregion
 
-
+//#region borderclass
 /** LIMITES */
 class Border{
     constructor(){
@@ -45,13 +48,18 @@ class Border{
     }
 }
 const border = new Border();
+//#endregion
+//#region loadmusic
+/**MUSICA */
+var audio = new Audio('sounds/audio.mp3');
+//#endregion
 
-
-
-
+//#region fonts
 /**FUENTES */
 var pixelFont= new FontFace('pixelFont', 'url(fonts/VPPixel-Simplified.otf)');
 pixelFont.load().then(function(font){document.fonts.add(font); });
+//#endregion 
+//#region loadimages
 /**IMAGENES*/
 function createImages(imagesrc){
     image=new Image()
@@ -59,11 +67,17 @@ function createImages(imagesrc){
     return image;
 }
 var imgTvExt = createImages('img/tv/televisionSimp');//new Image();
-var imgBackgroundSpace = createImages('img/bg/FondoEspacio');
+var imgBackgroundSpace = createImages('img/bg/space/back/FondoEspacio');
 var imgSpriteNaveFut = createImages('img/sprites/spaceships/SpriteNaveFuturama');
-var imgPlayPanelOn= createImages('img/PanelPlay');
-var imgSpaceStars= createImages('img/bg/EspacioFondoLargo');
-
+var imgPlayPanelOn= createImages('img/interface/playbutton/PanelPlay');
+var imgSpaceStars= createImages('img/bg/space/stars/EspacioFondoLargo');
+var imgSpacePlanetBlue= createImages('img/bg/space/planets/PlanetBlue');
+var imgSpaceDialog= createImages('img/interface/Dialog/BarraAbajo');
+var imgSpaceOldman= createImages('img/sprites/npc/SpriteViejo');
+var imgbuttons= createImages('img/tv/SpriteBotones');
+var imgTvBulb= createImages('img/tv/SpriteFusibles')
+var imgMuteButton= createImages('img/tv/SpriteSonido')
+//#endregion
 
 /**PANEL DE PLAY */
 class PlayPanel{
@@ -79,6 +93,290 @@ class PlayPanel{
     }
 }
 const playpanel= new PlayPanel();
+
+/** BOTON SONIDO */
+class MuteButton{
+    constructor(){
+        this.position={x:210*screenSize.multiplier, y:108*screenSize.multiplier}
+        this.width=19*screenSize.multiplier;
+        this.height=12*screenSize.multiplier;
+        this.image=imgMuteButton;
+        this.pulsed=1
+    }
+    draw(){
+        ctx.drawImage(this.image,
+            this.width*this.pulsed,0,//*this.pulsed+this.width*this.selected,this.height*this.color,    //Coordenadas de recorte iniciales, multiplicamos el ancho cada vez
+            this.width, this.height,    //Coordenadas de recorte finales
+            this.position.x, this.position.y,   //Posicion de la imagen en la pantalla
+            this.width, this.height);   //Tamaño de la imagen
+    }
+}
+const mutebutton= new MuteButton();
+function muteController(pulsed){
+    if(mousemove.x>mutebutton.position.x && mousemove.x<mutebutton.position.x+mutebutton.width
+        &&mousemove.y>mutebutton.position.y && mousemove.y<mutebutton.position.y+mutebutton.height){           
+            if(pulsed==1){
+                switch(mutebutton.pulsed){
+                    case 0: mutebutton.pulsed=1; 
+                            audio.pause();
+                            audio.currentTime = 0;
+                                break;
+                    case 1: mutebutton.pulsed=0;
+                            audio.play() ;break;                
+                }
+            }
+    }
+    //else
+    //mutebutton.selected=1    
+}
+
+/** FUSIBLES */
+
+class TvBulb{
+    constructor(color,place){
+        this.width=32*screenSize.multiplier
+        this.height=16*screenSize.multiplier
+        this.color=color;
+        this.place=place
+        this.position={x:214*screenSize.multiplier,y:13*screenSize.multiplier+this.height*place}
+        this.image=imgTvBulb;
+        this.frames=0;  //Indica el frame de la imagen en el que esta actualmente
+        this.maxframes=2;
+        this.animationtime=10
+        this.timer=0;
+        this.origcolor=color;
+        this.off=false;
+    }
+    draw(){
+        //ctx.drawImage(this.image, this.position.x, this.position.y);
+        ctx.drawImage(this.image,
+            this.width*this.frames,this.height*this.color,    //Coordenadas de recorte iniciales, multiplicamos el ancho cada vez
+            this.width, this.height,    //Coordenadas de recorte finales
+            this.position.x, this.position.y,   //Posicion de la imagen en la pantalla
+            this.width, this.height);   //Tamaño de la imagen
+    }
+    update(){
+        if(this.timer<this.animationtime)
+            this.timer++;
+        else{
+            this.timer=0;
+            this.frames++;
+            if(this.frames>=this.maxframes)this.frames=0;    //Para reiniciar el sprite 
+        }
+        if(this.off){
+            this.color=3;
+        }else this.color=this.origcolor;
+        this.draw();
+    }
+}
+
+var tvbulbs=[new TvBulb(0,0),new TvBulb(1,1), new TvBulb(2,2)]
+
+function showTvBulb(){
+        tvbulbs.forEach((tvbulb) =>{    
+            tvbulb.update();         
+        })
+
+}
+
+
+/**BOTONES TELEVISION */
+class TvButton{
+    constructor(color,place){ 
+            
+        this.width=13*screenSize.multiplier;
+        this.height=14*screenSize.multiplier
+        this.pulsed=1;
+        this.image=imgbuttons;
+        this.selected=1;
+        this.color=color;
+        this.place=place
+        this.position={x:210*screenSize.multiplier+this.width*place, y:67*screenSize.multiplier}   
+
+    }
+
+    draw(){
+        //ctx.drawImage(this.image, this.position.x, this.position.y);
+        ctx.drawImage(this.image,
+            this.width*this.selected*2+this.width*this.pulsed,this.height*this.color,//*this.pulsed+this.width*this.selected,this.height*this.color,    //Coordenadas de recorte iniciales, multiplicamos el ancho cada vez
+            this.width, this.height,    //Coordenadas de recorte finales
+            this.position.x, this.position.y,   //Posicion de la imagen en la pantalla
+            this.width, this.height);   //Tamaño de la imagen
+    }
+}
+//const tvbuttons = new TvButton();
+function buttonController(tbutton,pulsed){
+    if(mousemove.x>tbutton.position.x && mousemove.x<tbutton.position.x+tbutton.width
+        &&mousemove.y>tbutton.position.y && mousemove.y<tbutton.position.y+tbutton.height){
+            console.log('tbutton'+ tbutton.color)
+            tbutton.selected=0;
+            if(pulsed==1){
+                switch(tbutton.pulsed){
+                    case 0: tbutton.pulsed=1; 
+                             break;
+                    case 1: tbutton.pulsed=0;break;                
+                }
+            //Cambiar el color de los fusibles con el boton pulsado
+                tvbulbs.forEach((tvbulb) =>{    
+                    if(tbutton.place==tvbulb.place){
+                        switch(tbutton.pulsed){
+                            case 0: tvbulb.off=true;
+                                     break;
+                            case 1: tvbulb.off=false; break;                
+                        }
+                    }                              
+                })
+            }
+    }
+    else
+        tbutton.selected=1    
+}
+
+var tvbuttons=[new TvButton(0,0),new TvButton(1,1), new TvButton(2,2)]//,new TvButton(1,1),new TvButton(2,2)]
+function showTvButtons(pulsed){
+        tvbuttons.forEach((tvbutton) =>{    
+            tvbutton.draw();
+            buttonController(tvbutton,pulsed);
+        })
+
+}
+
+
+
+/**BARRA DE ABAJO */
+
+class DialogBar{
+    constructor(){
+        this.position={x:20*screenSize.multiplier, y:73*screenSize.multiplier}
+        this.width=172*screenSize.multiplier;
+        this.height=39*screenSize.multiplier;
+        this.image=imgSpaceDialog;
+    }
+    draw(){
+        ctx.drawImage(this.image, this.position.x, this.position.y);
+    }
+}
+const dialogbar= new DialogBar();
+
+class DialogText{
+    constructor(text,line, size, time){
+        this.position={x:64*screenSize.multiplier, y:83*screenSize.multiplier}
+        this.width=121*screenSize.multiplier;
+        this.height=25*screenSize.multiplier;
+        this.text=text;
+        this.color='black'
+        this.textAlign='left';
+        this.textBaseline='up';
+        this.fontsize=size*screenSize.multiplier;
+        this.slowtext=true;
+        this.counter=0-time;
+        this.timer=0;
+        this.line=line;
+        this.linespace=(size+1)*screenSize.multiplier;
+    }
+    write(){
+        ctx.fillStyle=this.color;
+       // ctx.fillRect(playpanel.position.x, playpanel.position.y, playpanel.width,playpanel.height);
+
+        ctx.textAlign=this.textAlign; 
+        ctx.textBaseline = this.textBaseline;
+        ctx.font=this.fontsize+'px pixelFont';
+        if(this.slowtext){
+            ctx.fillText(this.text.substr(0, this.counter), this.position.x, this.position.y+(this.linespace*this.line));
+            if(this.counter<this.text.length){
+                if(this.timer<4){
+                    this.timer++;
+                    //console.log(this.counter);
+                }else{
+                    this.counter++;
+                    this.timer=0;
+                    //console.log(this.counter);
+                }
+                //console.log(this.timer);
+                
+            }
+        }//else
+          //  ctx.fillText(this.text, this.position.x, this.position.y);
+        
+    }  
+}
+
+var dialogtext=[]
+function textFit(text,size){
+    var textarray=text.split(' ');
+    var line=0;
+    var maxlines=4;
+    var dialogtext=[];
+    var phrase=[];
+    var maxchars=35;
+    var time=0;
+    textarray.forEach((word, index)=>{
+        /*if(linetext.length+word.length<maxchars)
+            linetext[].concat(word)
+        else
+            line++;
+    */  //console.log(word)
+       /* if(phrase.length+word.length>maxchars){
+            
+            //console.log(textarray.length + ' ff')
+            dialogtext.push(new DialogText(phrase,line,size ,time))
+            phrase=''
+            line++
+            time=+word.length
+            phrase=phrase+' '+ word;
+            
+        }else{
+            phrase=phrase+' '+ word;
+            time=+word.length
+            if(phrase.length+time==text.length){
+                //time=+phrase.length
+                dialogtext.push(new DialogText(phrase,line,size ,time))
+                console.log(phrase)
+            
+            }
+            console.log(time)
+            console.log(text.length)
+        }      */      
+        time=time+word.length
+        if(time>maxchars*line){
+            dialogtext.push(new DialogText(phrase.join(' '),line,size ,time))
+            line++
+            phrase=[]
+            console.log(phrase)     
+        }
+        phrase.push(word); 
+
+        console.log(phrase) 
+        console.log(time)       
+        console.log(text.length)    
+  
+   
+  
+
+    })
+    //console.log(dialogtext)
+    //console.log(word)
+    return dialogtext;
+}
+//textFit('Lorem Ipsum is simply dummy Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum  text of th',6)
+var text='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dotis gfg mnmante, et matti gfgfgfg fgff fdf dfdffd fdfdfs ';
+dialogtext=textFit(text,6)
+console.log(dialogtext)
+dialogtext.forEach((line)=>{
+    console.log(line)
+    })
+/*var dialogtext=[  new DialogText('Lorem Ipsum is simply dummy text of th',0,6 ,46),  //38 caracteres por linea
+                    new DialogText('Lorem Ipsum is simply dummy text of th',1,6,46 ),
+                    new DialogText('Lorem Ipsum is simply dummy text of th',2,6,46 ),
+                    new DialogText('Lorem Ipsum is simply dummy text of th',3,6,46 )];*/
+                    
+function dialogText(){
+    
+    dialogtext.forEach((line)=>{
+    //for(i=0;i<dialogtext.length;i++)
+        line.write();
+    })
+}
 
 /**FONDO NEBULOSAS y ESTRELLAS */
 class BackgroundStars{
@@ -97,13 +395,40 @@ class BackgroundStars{
     update(){
         this.draw();
         this.position.x-=this.velocity;
-            if(this.position.x-this.velocity+(this.width*this.counter)<=border.position.x1-this.width){
-                this.counter++;
-                console.log(this.counter)
-            }
+        if(this.position.x-this.velocity+(this.width*this.counter)<=border.position.x1-this.width){
+            this.counter++;
+            //console.log(this.counter)
+        }
     }
 }
 const backgroundstars= new BackgroundStars();
+/**FONDO PLANETAS
+ * Añadirle un array de imagenes y que vaya escogiendo una imagen random cada vez, y en una posicion random de Y
+ */
+class BackgroundPlanets{
+    constructor(){
+        this.position={x:border.position.x2, y:border.position.y2/2}  //Cambiar
+        //this.width=border.width;   //Cambiar
+        //this.height=96*screenSize.multiplier;   //Cambiar
+        this.velocity=1;
+        this.image=imgSpacePlanetBlue;   //Cambiar
+        this.counter=0; //Contador para ver cuando le toca a cada imagen dibujarse
+    }
+    draw(){
+        //ctx.fillRect(this.position.x, this.position.y-border.height/2,32*screenSize.multiplier, 32*screenSize.multiplier);
+        ctx.drawImage(this.image,this.position.x, this.position.y);
+    }
+    update(){
+        this.draw();
+        this.position.x-=this.velocity;
+        if(this.position.x+border.width/2<=0){
+            this.position.x=border.position.x2;            
+            this.position.y=Math.random() * (screenSize.height - 0);
+            //console.log(this.counter)
+        }
+    }
+}
+const backgroundPlanets = new BackgroundPlanets();
 
 /**PERSONAJE */
 class Player{
@@ -115,6 +440,7 @@ class Player{
         this.image=imgSpriteNaveFut;
         this.frames=0;  //Indica el frame de la imagen en el que esta actualmente
         this.maxframes=8;
+        this.health=0;
     }
     draw(){
         ctx.fillStyle='red';
@@ -139,10 +465,93 @@ const keys = {  //Creamos e instanciamos el objeto keys para saber que boton est
     right:{pressed:false},
     left:{pressed:false},
     down:{pressed:false},
-    up:{pressed:false}
+    up:{pressed:false},
+    space:{pressed:false}
 }
 const mousemove={
     x:0, y:0
+}
+
+/**NPC */
+class Npc{
+    constructor(){
+        this.position={x:23*screenSize.multiplier,y:77*screenSize.multiplier};
+        this.width=32*screenSize.multiplier;
+        this.height=32*screenSize.multiplier;
+        this.image=imgSpaceOldman;
+        this.frames=0;  //Indica el frame de la imagen en el que esta actualmente
+        this.maxframes=8;
+        this.animationtime=10
+        this.timer=0;
+    }
+    draw(){
+        //ctx.drawImage(this.image, this.position.x, this.position.y);
+        ctx.drawImage(this.image,
+            this.width*this.frames,0,    //Coordenadas de recorte iniciales, multiplicamos el ancho cada vez
+            this.width, this.height,    //Coordenadas de recorte finales
+            this.position.x, this.position.y,   //Posicion de la imagen en la pantalla
+            this.width, this.height);   //Tamaño de la imagen
+    }
+    update(){
+        if(this.timer<this.animationtime)
+            this.timer++;
+        else{
+            this.timer=0;
+            this.frames++;
+            if(this.frames>=this.maxframes)this.frames=0;    //Para reiniciar el sprite 
+        }
+        this.draw();
+    }
+}
+const npc=new Npc();
+
+/**PROYECTILES */
+class Projectile{
+    constructor(position, velocity){
+        this.position={x:position.x, y:position.y};//, y:positiony};
+        this.velocity=velocity;
+        this.radius=1*screenSize.multiplier;
+    }
+    draw(){
+        //ctx.beginPath()
+        ctx.fillStyle='white';
+        ctx.strokeStyle='white';
+        ctx.lineWidth = 5;
+        ctx.beginPath()            
+        ctx.arc(this.position.x+player.width/2, this.position.y+player.height/2,this.radius,0, Math.PI*2)        
+        ctx.stroke();
+        ctx.fill();
+        //ctx.closePath();
+        //ctx.fillRect(this.position.x, this.position.y, 100, 100);
+    }
+    update(){
+        this.draw();
+        this.position.x+=this.velocity;
+        //this.position.y=this.velocity.y;
+    }
+}
+
+
+
+var projectiles=[new Projectile(player.position, 1),new Projectile(player.position, 2),new Projectile(player.position, 3),new Projectile(player.position, 4)]
+function showProjectiles(){
+        projectiles.forEach((projectile,index) =>{    
+            if(projectile.position.x+projectile.radius>=border.width){ //Va eliminando los proyectiles que se salen del mapa
+            setTimeout(()=>{
+                projectiles.splice(index, 1)   
+            },0)                
+        }else{
+                projectile.update();}
+        
+            /*if(projectile[i].position.x>border.width){
+                console.log('tamaño array: '+ projectile.length)
+                projectile.splice(projectile[i],1);
+                console.log('projectil: '+ (i+1))
+                console.log('tamaño array: '+ projectile.length)
+            }*/
+        })
+        
+    //}
 }
 
 /** TEXTO */
@@ -153,7 +562,7 @@ function textWrite(){
     ctx.fillStyle='white';
     ctx.textAlign="center"; 
     ctx.textBaseline = "middle";
-    ctx.font=5*screenSize.multiplier+'px pixelFont';
+    ctx.font=13*screenSize.multiplier+'px pixelFont';
     //ctx.textAlign='center';
     ctx.fillText('Play', playpanel.position.x+(playpanel.width/2), playpanel.position.y+(playpanel.height/2));
     
@@ -181,55 +590,128 @@ function keysControl(){
     if(keys.down.pressed)player.velocity.y=3;
     else if (keys.up.pressed) player.velocity.y=-3
     else player.velocity.y=0;
+
+    //Si se pulsa la barra espaciadora que añada un disparo a la lista
+    //if(keys.spacebar.pressed)
+    
+    //if(keys.space.pressed){
+        //projectile.push(new Projectile(player.position, 10, damage, delay))
+
+        
+    
 }
+
+/**FUNCION QUE DIBUJE EL NIVEL DEL ESPACIO */
+function spaceDraw(){
+    ctx.drawImage(imgBackgroundSpace,border.position.x1,border.position.y1); //Fondo pequeño del espacio
+    backgroundstars.update();
+    backgroundPlanets.update();
+    player.update();
+}
+
+/**Pruebas raton */
+
+function pruebas(){
+    if(mousemove.x>playpanel.position.x && mousemove.x<playpanel.position.x+playpanel.width
+    &&mousemove.y>playpanel.position.y && mousemove.y<playpanel.position.y+playpanel.height){
+        //('play')   
+        //audio.play()
+    }
+}
+
+//#region animatefunction
 
 /**DIBUJO POR PANTALLA */
 function animate(){
     requestAnimationFrame(animate)  //Actualiza la pantalla continuamente
-    ctx.clearRect(0,0,canvas.width, canvas.height); //Limpia toda la pantalla
-
-    ctx.drawImage(imgBackgroundSpace,border.position.x1,border.position.y1); //Fondo pequeño del espacio
-    backgroundstars.update();
+    ctx.clearRect(0,0,canvas.width, canvas.height); //Limpia toda la pantalla    
     //border.draw();
     //ctx.fillRect(19*screenSize.multiplier, 78*screenSize.multiplier, border.width,19*screenSize.multiplier+border.position.y2);
     //ctx.fillStyle='red'
     //ctx.fillRect(19*screenSize.multiplier, 78*screenSize.multiplier, 32*screenSize.multiplier,19*screenSize.multiplier+border.position.y2);
-
-    player.update();
-    playpanel.draw();
-
-    ctx.drawImage(imgTvExt, 0, 0); 
+    spaceDraw();//Dibuja todo lo del espacio
+    //playpanel.draw();
+    npc.update();
+    dialogbar.draw();
+    dialogText();//.write();
+    showProjectiles();
+    ctx.drawImage(imgTvExt, 0, 0);
+    showTvButtons(0)
+    showTvBulb()
+    mutebutton.draw()
+    
     keysControl();     
 
     //Detectar las colisiones
     collitionBorder();
     textWrite();
-
-    console.log('go')
+    
+    //console.log('go')
 }
 animate(); 
-
-
+//#endregion
+//#region eventslisteners
 /*LECTURA DE ENTRADAS (Falta el control para dispositivos moviles) */
-window.addEventListener('keydown',({keyCode})=>   //Vemos que tecla se ha pulsado y le ponemos una accion
-    {switch(keyCode){
-        case 65: keys.left.pressed=true; break;
-        case 83: keys.down.pressed=true; break;
-        case 68: keys.right.pressed=true; break;
-        case 87: keys.up.pressed=true; break;
-    }});
-window.addEventListener('keyup',({keyCode})=>   //Vemos que tecla se ha pulsado y le ponemos una accion
-    {switch(keyCode){
-        case 65: keys.left.pressed=false; break;
-        case 83: keys.down.pressed=false; break;
-        case 68: keys.right.pressed=false; break;
-        case 87: keys.up.pressed=false; break;
-    }});
+window.addEventListener('keydown',({key})=>   //Vemos que tecla se ha pulsado y le ponemos una accion
+    {
+        //audio.play()
+        //console.log(key);
+        switch(key){
+            case 'a': 
+            case 'ArrowLeft':   keys.left.pressed=true;
+                break;
+            case 's': 
+            case 'ArrowDown':keys.down.pressed=true; 
+                break;
+            case 'd': 
+            case 'ArrowRight':keys.right.pressed=true; 
+                break;
+            case 'w':
+            case 'ArrowUp': keys.up.pressed=true; 
+                break;
+            case ' ': keys.space.pressed=true; 
+                break;
+            
+        }
+    });
+window.addEventListener('keyup',({key})=>   //Vemos que tecla se ha pulsado y le ponemos una accion
+    {switch(key){
+        case 'a': 
+        case 'ArrowLeft':   keys.left.pressed=false;
+            break;
+        case 's': 
+        case 'ArrowDown':keys.down.pressed=false; 
+            break;
+        case 'd': 
+        case 'ArrowRight':keys.right.pressed=false; 
+            break;
+        case 'w': 
+        case 'ArrowUp':keys.up.pressed=false; 
+            break;
+        case ' ': keys.space.pressed=false; 
+                break;
+    }
+});
+
 /*window.addEventListener('keydown',(keycode)=>   //Permite ver que tecla has pulsado keycode - event
     console.log(event));*/
 window.addEventListener("mousemove", function(e) { 
-    console.log(e.screenX, e.screenY)
-    //var cRect = canvas.getBoundingClientRect(); 
-    mousemove.x=e.screenX;
-    mousemove.y=e.screenY;
+    var rect = canvas.getBoundingClientRect(), // abs. size of element
+        scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
+        scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
+    mousemove.x=(e.clientX - rect.left) * scaleX;
+    mousemove.y=(e.clientY - rect.top) * scaleY;
+    //console.log(BBoffsetX, BBoffsetY)
+    //console.log(getMousePos(canvas, e))
+    pruebas();
 });
+
+window.addEventListener("click", function(e) { 
+    //console.log(e)
+    showTvButtons(1)
+    muteController(1)
+    pruebas();
+    
+});
+
+//#endregion
