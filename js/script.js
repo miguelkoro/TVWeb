@@ -49,6 +49,19 @@ class Border{
 }
 const border = new Border();
 //#endregion
+
+//Funcion que me diga cuando un objeto se ha salido de la pantalla
+function offScreen(position,height,width){
+    if(position.x>border.position.x2 ||
+        position.x+width<border.position.x1 ||
+        position.y>border.position.y2 ||
+        position.y+height<border.position.y1)
+        return true
+        else
+        return false
+}
+
+
 //#region loadmusic
 /**MUSICA */
 var audio = new Audio('sounds/audio.mp3');
@@ -80,11 +93,9 @@ var imgMuteButton= createImages('img/tv/SpriteSonido')
 //#endregion
 
 /**PANEL DE PLAY */
-class PlayPanel{
+/*class PlayPanel{
     constructor(){
-        this.position={x:87*screenSize.multiplier, y:48*screenSize.multiplier}
-        this.width=26*screenSize.multiplier;
-        this.height=9*screenSize.multiplier;
+        
         this.imageOn=imgPlayPanelOn;
         this.imageOff='';//imgPlayPanelOff;
     }
@@ -92,7 +103,7 @@ class PlayPanel{
         ctx.drawImage(this.imageOn, this.position.x, this.position.y);
     }
 }
-const playpanel= new PlayPanel();
+const playpanel= new PlayPanel();*/
 
 /** BOTON SONIDO */
 class MuteButton{
@@ -241,6 +252,8 @@ function showTvButtons(pulsed){
 
 }
 
+/** Pantalla Principal */
+
 
 
 /**BARRA DE ABAJO */
@@ -259,20 +272,31 @@ class DialogBar{
 const dialogbar= new DialogBar();
 
 class DialogText{
-    constructor(text,line, size, time){
+    constructor(text,size){
         this.position={x:64*screenSize.multiplier, y:83*screenSize.multiplier}
         this.width=121*screenSize.multiplier;
         this.height=25*screenSize.multiplier;
-        this.text=text;
+        this.timecounter=0;    
         this.color='black'
         this.textAlign='left';
         this.textBaseline='up';
         this.fontsize=size*screenSize.multiplier;
         this.slowtext=true;
-        this.counter=0-time;
+        this.linespace=this.height/4;
+        this.textstring=text;
+        this.textarray=[]
+        this.maxchars=36
+
+        //this.linesarray=''
+        //this.phrasearray=[]
+       
+
+        this.counter=0;
         this.timer=0;
-        this.line=line;
-        this.linespace=(size+1)*screenSize.multiplier;
+        this.line=0;
+        this.chars=0;
+        
+        this.textConvert()
     }
     write(){
         ctx.fillStyle=this.color;
@@ -282,101 +306,75 @@ class DialogText{
         ctx.textBaseline = this.textBaseline;
         ctx.font=this.fontsize+'px pixelFont';
         if(this.slowtext){
-            ctx.fillText(this.text.substr(0, this.counter), this.position.x, this.position.y+(this.linespace*this.line));
-            if(this.counter<this.text.length){
-                if(this.timer<4){
-                    this.timer++;
-                    //console.log(this.counter);
-                }else{
-                    this.counter++;
-                    this.timer=0;
-                    //console.log(this.counter);
+            var chars=0;
+            //this.line=0;
+            //this.counter=0;
+            //this.timer=0;
+            this.textarray.forEach((line,index)=>{
+
+                if(index<this.line)
+                    ctx.fillText(line, this.position.x, this.position.y+(this.linespace*(index)));
+                else if(index==this.line){
+
+                    ctx.fillText(line.substr(0, this.counter), this.position.x, this.position.y+(this.linespace*(index)));
+                    if(this.timer<3){
+                        this.timer++;
+                        //console.log(this.counter);
+                    }else{
+                        this.counter++;
+                        this.timer=0;
+                        chars++;
+                        //console.log(this.counter);
+                    }
+                    console.log(line.length + ' ' + this.counter )
+                    if(this.counter==line.length){
+                        this.line++;
+                        this.counter=0
+                        //console.log('igual',this.line)
+                        //console.log('igual',this.line)
+                        
+                    }
                 }
-                //console.log(this.timer);
                 
-            }
-        }//else
-          //  ctx.fillText(this.text, this.position.x, this.position.y);
-        
-    }  
-}
+                //console.log(line)     
+                //chars+=line.length          
+            })
 
-var dialogtext=[]
-function textFit(text,size){
-    var textarray=text.split(' ');
-    var line=0;
-    var maxlines=4;
-    var dialogtext=[];
-    var phrase=[];
-    var maxchars=35;
-    var time=0;
-    textarray.forEach((word, index)=>{
-        /*if(linetext.length+word.length<maxchars)
-            linetext[].concat(word)
-        else
-            line++;
-    */  //console.log(word)
-       /* if(phrase.length+word.length>maxchars){
-            
-            //console.log(textarray.length + ' ff')
-            dialogtext.push(new DialogText(phrase,line,size ,time))
-            phrase=''
-            line++
-            time=+word.length
-            phrase=phrase+' '+ word;
-            
         }else{
-            phrase=phrase+' '+ word;
-            time=+word.length
-            if(phrase.length+time==text.length){
-                //time=+phrase.length
-                dialogtext.push(new DialogText(phrase,line,size ,time))
-                console.log(phrase)
-            
+            this.textarray.forEach((line,index)=>{
+                ctx.fillText(line, this.position.x, this.position.y+(this.linespace*(index)));
+                //console.log(line)
+            })
+            }          
+    }  
+    textConvert(){
+        var line=0
+         this.textarray=this.textstring.split(' ')   
+         this.textstring=''
+         this.textarray.forEach((word,index)=>{ 
+            if(index!=this.textarray.length-1)
+                word+=' '
+            if(this.textstring.length>=this.maxchars*(line+1)){
+                this.textstring+='/n'
+                line++           
             }
-            console.log(time)
-            console.log(text.length)
-        }      */      
-        time=time+word.length
-        if(time>maxchars*line){
-            dialogtext.push(new DialogText(phrase.join(' '),line,size ,time))
-            line++
-            phrase=[]
-            console.log(phrase)     
-        }
-        phrase.push(word); 
-
-        console.log(phrase) 
-        console.log(time)       
-        console.log(text.length)    
-  
-   
-  
-
-    })
-    //console.log(dialogtext)
-    //console.log(word)
-    return dialogtext;
+            if(index==0)
+                this.textstring=word//.push(word)[this.lineS];
+            else
+                this.textstring+=word      
+        }) 
+        this.textarray=this.textstring.split('/n')
+        line=0;
+        console.log('string: '+this.textarray[0])
+    }
 }
+
 //textFit('Lorem Ipsum is simply dummy Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum  text of th',6)
-var text='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dotis gfg mnmante, et matti gfgfgfg fgff fdf dfdffd fdfdfs ';
-dialogtext=textFit(text,6)
-console.log(dialogtext)
-dialogtext.forEach((line)=>{
-    console.log(line)
-    })
-/*var dialogtext=[  new DialogText('Lorem Ipsum is simply dummy text of th',0,6 ,46),  //38 caracteres por linea
-                    new DialogText('Lorem Ipsum is simply dummy text of th',1,6,46 ),
-                    new DialogText('Lorem Ipsum is simply dummy text of th',2,6,46 ),
-                    new DialogText('Lorem Ipsum is simply dummy text of th',3,6,46 )];*/
-                    
-function dialogText(){
-    
-    dialogtext.forEach((line)=>{
-    //for(i=0;i<dialogtext.length;i++)
-        line.write();
-    })
-}
+var text='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed felis lorem, rhoncus id accumsan id, congue et justo. Fusce eget sem mollis';
+var dialogtext=new DialogText(text,6) 
+var dialog=false  
+            
+
 
 /**FONDO NEBULOSAS y ESTRELLAS */
 class BackgroundStars{
@@ -505,68 +503,40 @@ class Npc{
 }
 const npc=new Npc();
 
-/**PROYECTILES */
-class Projectile{
-    constructor(position, velocity){
-        this.position={x:position.x, y:position.y};//, y:positiony};
-        this.velocity=velocity;
-        this.radius=1*screenSize.multiplier;
-    }
-    draw(){
-        //ctx.beginPath()
-        ctx.fillStyle='white';
-        ctx.strokeStyle='white';
-        ctx.lineWidth = 5;
-        ctx.beginPath()            
-        ctx.arc(this.position.x+player.width/2, this.position.y+player.height/2,this.radius,0, Math.PI*2)        
-        ctx.stroke();
-        ctx.fill();
-        //ctx.closePath();
-        //ctx.fillRect(this.position.x, this.position.y, 100, 100);
-    }
-    update(){
-        this.draw();
-        this.position.x+=this.velocity;
-        //this.position.y=this.velocity.y;
-    }
-}
 
 
-
-var projectiles=[new Projectile(player.position, 1),new Projectile(player.position, 2),new Projectile(player.position, 3),new Projectile(player.position, 4)]
-function showProjectiles(){
-        projectiles.forEach((projectile,index) =>{    
-            if(projectile.position.x+projectile.radius>=border.width){ //Va eliminando los proyectiles que se salen del mapa
-            setTimeout(()=>{
-                projectiles.splice(index, 1)   
-            },0)                
-        }else{
-                projectile.update();}
-        
-            /*if(projectile[i].position.x>border.width){
-                console.log('tamaño array: '+ projectile.length)
-                projectile.splice(projectile[i],1);
-                console.log('projectil: '+ (i+1))
-                console.log('tamaño array: '+ projectile.length)
-            }*/
-        })
-        
-    //}
-}
 
 /** TEXTO */
-function textWrite(){
-    //ctx.fillStyle='red';
-    //ctx.fillRect(playpanel.position.x, playpanel.position.y, playpanel.width,playpanel.height);
-
-    ctx.fillStyle='white';
-    ctx.textAlign="center"; 
-    ctx.textBaseline = "middle";
-    ctx.font=13*screenSize.multiplier+'px pixelFont';
-    //ctx.textAlign='center';
-    ctx.fillText('Play', playpanel.position.x+(playpanel.width/2), playpanel.position.y+(playpanel.height/2));
-    
+class PlayButton{
+    constructor(){
+        this.size=20
+        this.style='white'
+        this.textBaseline="middle"
+        this.textAlign="center"
+        this.position={x:87*screenSize.multiplier, y:48*screenSize.multiplier}
+        this.velocity={x:0,y:0}
+        this.width=26*screenSize.multiplier;
+        this.height=9*screenSize.multiplier;
+        this.mouse=false
+        this.offscreen=false;
+    }
+    draw(){
+        ctx.fillStyle=this.style;
+        ctx.textAlign=this.textAlign; 
+        ctx.textBaseline = this.textBaseline;
+        ctx.font=this.size*screenSize.multiplier+'px pixelFont';
+        ctx.fillText('Play', this.position.x+(this.width/2), this.position.y+(this.height/2));
+    }
+    update(){
+        if(!this.offscreen){
+            this.position.y+=this.velocity.y
+        }
+        if(!offScreen(this.position,this.width,this.height))
+            this.draw()
+    }
 }
+const playbutton=new PlayButton();
+
 
 
 //COLISIONES CON EXTERIOR con el exterior de la pantalla
@@ -582,6 +552,7 @@ function collitionBorder(){
 }
 
 //CONTROLES TECLADO
+var timer=0;
 function keysControl(){
     if(keys.left.pressed)player.velocity.x=-3;
     else if (keys.right.pressed) player.velocity.x=3
@@ -593,10 +564,13 @@ function keysControl(){
 
     //Si se pulsa la barra espaciadora que añada un disparo a la lista
     //if(keys.spacebar.pressed)
-    
-    //if(keys.space.pressed){
-        //projectile.push(new Projectile(player.position, 10, damage, delay))
-
+    if(timer>15){
+        if(keys.space.pressed){
+            projectiles.push(new Projectile(player.position, velocity={x:10, y:0}, 3, 1))
+            timer=0
+        }
+    }
+    timer++
         
     
 }
@@ -606,17 +580,45 @@ function spaceDraw(){
     ctx.drawImage(imgBackgroundSpace,border.position.x1,border.position.y1); //Fondo pequeño del espacio
     backgroundstars.update();
     backgroundPlanets.update();
+    showProjectiles();
     player.update();
 }
 
 /**Pruebas raton */
 
-function pruebas(){
+
+function Pointer(click){
+    
+    if(mousemove.x>playbutton.position.x && mousemove.x<playbutton.position.x+playbutton.width
+        &&mousemove.y>playbutton.position.y && mousemove.y<playbutton.position.y+playbutton.height){
+            playbutton.size=22
+            if(click==1)playbutton.velocity.y=-2;
+        }
+        else
+            playbutton.size=13
+}
+
+/*function pruebas(){
     if(mousemove.x>playpanel.position.x && mousemove.x<playpanel.position.x+playpanel.width
     &&mousemove.y>playpanel.position.y && mousemove.y<playpanel.position.y+playpanel.height){
         //('play')   
         //audio.play()
     }
+}*/
+
+function dialogText(){    
+    if(dialog){
+        npc.update();
+        dialogbar.draw();
+        dialogtext.write();        
+    }
+}
+
+function tvDraw(){
+    ctx.drawImage(imgTvExt, 0, 0);
+    showTvButtons(0)
+    showTvBulb()
+    mutebutton.draw()
 }
 
 //#region animatefunction
@@ -631,21 +633,21 @@ function animate(){
     //ctx.fillRect(19*screenSize.multiplier, 78*screenSize.multiplier, 32*screenSize.multiplier,19*screenSize.multiplier+border.position.y2);
     spaceDraw();//Dibuja todo lo del espacio
     //playpanel.draw();
-    npc.update();
-    dialogbar.draw();
-    dialogText();//.write();
-    showProjectiles();
-    ctx.drawImage(imgTvExt, 0, 0);
-    showTvButtons(0)
-    showTvBulb()
-    mutebutton.draw()
+
     
+    dialogText();//.write();
+    
+    
+    
+    
+    
+    playbutton.update()
     keysControl();     
 
     //Detectar las colisiones
     collitionBorder();
-    textWrite();
-    
+    //textWrite();
+    tvDraw()
     //console.log('go')
 }
 animate(); 
@@ -703,14 +705,14 @@ window.addEventListener("mousemove", function(e) {
     mousemove.y=(e.clientY - rect.top) * scaleY;
     //console.log(BBoffsetX, BBoffsetY)
     //console.log(getMousePos(canvas, e))
-    pruebas();
+    Pointer();
 });
 
 window.addEventListener("click", function(e) { 
     //console.log(e)
     showTvButtons(1)
     muteController(1)
-    pruebas();
+    Pointer(1);
     
 });
 

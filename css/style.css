@@ -10,6 +10,9 @@ html, body {
     padding: 0;
     margin: auto;
     display: block;
-    background-color: burlywood;
-    
+    background-color: burlywood;    
+}
+
+#container{
+    visibility: hidden;
 }
