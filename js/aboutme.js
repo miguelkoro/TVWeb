@@ -42,19 +42,19 @@ class Spider{
             this.opacity-=0.005
             //console.log(this.opacity)
         }else{
-            if(this.position.x+this.velocity.x+this.width>border.position.x2+this.width){
+            if(this.position.x+this.velocity.x+this.width>border.position.x+border.width+this.width){
                 this.velocity.x=-2
                 this.velocity.y=2*(Math.floor(Math.random() * (2 - (-1))) + -1)
                 this.orientation()
-            }else if(this.position.x+this.velocity.x<border.position.x1-this.width){
+            }else if(this.position.x+this.velocity.x<border.position.x-this.width){
                 this.velocity.x=2
                 this.velocity.y=2*(Math.floor(Math.random() * (2 - (-1))) + -1)
                 this.orientation()
-            }else if(this.position.y+this.velocity.y+this.height>border.position.y2+this.height){
+            }else if(this.position.y+this.velocity.y+this.height>border.position.y+border.height+this.height){
                 this.velocity.y=-2
                 this.velocity.x=2*(Math.floor(Math.random() * (2 - (-1))) + -1)
                 this.orientation()
-            }else if(this.position.y+this.velocity.y<border.position.y1-this.height){
+            }else if(this.position.y+this.velocity.y<border.position.y-this.height){
                 this.velocity.y=2
                 this.velocity.x=2*(Math.floor(Math.random() * (2 - (-1))) + -1)
                 this.orientation()
@@ -120,12 +120,12 @@ class BookLevel{
 
 //Hacer Superclase de IntercativeImage e incluir esta clase como extends
 class BookDecoration{
-    constructor(position, image){
+    constructor(position, width, height, image, separation){
         this.position={x:position.x*screenSize.multiplier, y:position.y*screenSize.multiplier}
-        this.separation=10*screenSize.multiplier
+        this.separation=separation*screenSize.multiplier
         this.image=image
-        this.width=26*screenSize.multiplier
-        this.height=15*screenSize.multiplier
+        this.width=width*screenSize.multiplier
+        this.height=height*screenSize.multiplier
     }
     draw(){
         ctx.drawImage(imgDecorationBook,
@@ -142,38 +142,18 @@ class BookDecoration{
     }
 
 }
-//Puedo quitarla y hacerla de tipo Interactive image
-class NextPage{
-    constructor(position, side){
-        this.position={x:position.x*screenSize.multiplier, y:position.y*screenSize.multiplier}
-        this.width=8*screenSize.multiplier
-        this.height=8*screenSize.multiplier
-        this.frames=0
-        this.timer=0
-        this.side=side
+
+class Bookpage extends Text{
+    constructor(){
+
     }
-    draw(){
-            if(this.timer<9)
-                this.timer++
-            else{
-                if(this.frames==5)this.frames=0
-                else this.frames++  
-                this.timer=0; 
-                
-            }  
-            ctx.drawImage(imgNextPage,
-                this.width*this.frames,this.height*this.side,    //Coordenadas de recorte iniciales, multiplicamos el ancho cada vez
-                this.width, this.height,    //Coordenadas de recorte finales
-                this.position.x, this.position.y,   //Posicion de la imagen en la pantalla
-                this.width, this.height);   //Tamaño de la imagen
-    }    
 }
 
 var spidervelocity=[velocity={x:0,y:2},velocity={x:0,y:-2},velocity={x:2,y:0},velocity={x:-2,y:0}]
-var spiderposition=[position={x:Math.floor(border.position.x2/2),y:border.position.y1-10*screenSize.multiplier},
-                    position={x:Math.floor(border.position.x2/2),y:border.position.y2+10*screenSize.multiplier},
-                    position={x:Math.floor(border.position.x1-14*screenSize.multiplier),y:border.position.y2/2},
-                    position={x:Math.floor(border.position.x2+14*screenSize.multiplier),y:border.position.y2/2}]
+var spiderposition=[position={x:Math.floor(border.position.x+border.width/2),y:border.position.y-10*screenSize.multiplier},
+                    position={x:Math.floor(border.position.x+border.width/2),y:border.position.y+border.height+10*screenSize.multiplier},
+                    position={x:Math.floor(border.position.x-14*screenSize.multiplier),y:border.position.y+border.height/2},
+                    position={x:Math.floor(border.position.x+border.width+14*screenSize.multiplier),y:border.position.y+border.height/2}]
 //Declarar variables de texto segun idioma                    
 var aboutmeTittlesText=[]
 var aboutmeCertificateText=[]
@@ -181,15 +161,15 @@ var aboutmeCertificateExtendText=[]
 var aboutmeTitleDescriptionText=''
 if(languaje==0){
     //TITULOS TEXTO
-    aboutmeTittlesText=['Sobre Mi', 'Agradecimientos', 'Programacion', 'Titulos']
-    aboutmeTitleDescriptionText='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum placerat ultricies bibendum. interdum urna vel ipsum convallis, ut maximus augue elementum. Quisque eget cursus ligula, venenatis accumsan lectus. Aliquam massa libero, auctor at neque in, pulvinar faucibus magna. 25'
+    aboutmeTittlesText=['Sobre Mí', 'Agradecimientos', 'Programación', 'oóuúíiÑñeéáa']
+    aboutmeTitleDescriptionText='Lorem ñññ áÁ,É,Í,ÚÓ, é, v¿hhh?v _ v¡fdfdf!v ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum placerat ultricies bibendum. interdum urna vel ipsum convallis, ut maximus augue elementum. Quisque eget cursus ligula, venenatis accumsan lectus. Aliquam massa libero, auctor at neque in, pulvinar faucibus magna. 25'
     aboutmeCertificateText=['Grado Superior: ASIR', 'Administracion de Sistemas Informaticos y Redes',
                             'Grado Superior: DAM', 'Diseno de Aplicaciones Multiplataforma', 
                             'C#', 'Titulo en .NET',
                             'Carrera Universitaria', 'Ingenieria de Software']
     aboutmeCertificateExtendText=[  'Lorem dolor sit consectetur adipiscing elit. Vestibulum placerat ultricies bibendum. interdum urna vel ipsum convallis, ut maximus augue elementum. Quisque eget cursus ligula, venenatis accumsan lectus. Aliquam massa libero, auctor at neque in, pulvinar faucibus ',
                                     'Lorem sit amet, consecteestibulum placerat ultricies bibendum. interdum urna vel ipsum convallis, ut maximus augue elementum. Quisque eget cursus ligula, venenatis accumsan lectus. Aliquam massa libero, auctor at neque in, pulvinar faucibus magna.',
-                                    'Lorem amet, consectetur elit. Vestibulum placerat ultricies bibendum. interdum urna vel ipsum convallis, ut maximus augue elementum. Quisque eget cursus ligula, venenatis accumsan lectus. Aliquam massa libero, auctor at neque in ',
+                                    'Lorem amet/n, consectetur elit. Vestibulum placerat ultricies bibendum. interdum urna vel ipsum convallis, ut maximus augue elementum. Quisque eget cursus ligula, venenatis accumsan lectus. Aliquam massa libero, auctor at neque in ',
                                     'Lorem consectetur adipiscing elit. Vestibulum placerat ultricies bibendum. interdum urna vel ipsum convallis, ut maximus augue elementum. Quisque eget cursus ligula, venenatis accumsan lectus. Aliquam massa libero, auctor at neque in, pulvinar']
     //SOBRE MI TEXTO
 
@@ -222,13 +202,13 @@ class BookAboutMe{
 
         this.pagtextright= new Text('', 2.5, '#404040', position={x:156, y:100.5}, 'pixelFont', 'center')
         this.pagtextleft= new Text('', 2.5, '#404040', position={x:29, y:100.5}, 'pixelFont', 'center')
-        this.nextpageright= new NextPage(position={x:174,y:99},0)
-        this.nextpageleft= new NextPage(position={x:31,y:99},1)
+        this.nextpageright= new ImageDraw(position={x:174,y:99},8,8,imgNextPage,0,0,'',5,9)//new AnimatedImage(position={x:174,y:99},8,8,imgNextPage,5,9,0)//new NextPage(position={x:174,y:99},0)
+        this.nextpageleft= new ImageDraw(position={x:31,y:99},8,8,imgNextPage,0,1,'',5,9)//new AnimatedImage(position={x:31,y:99},8,8,imgNextPage,5,9,1)//new NextPage(position={x:31,y:99},1)
         //MARCAPAGINAS
-        this.markspages=[new InteractiveImage(position={x:20,y:46},12,13,imgMarkPage, 1,0,velocity={x:0,y:0}),
-                        new InteractiveImage(position={x:19,y:60},12,13,imgMarkPage, 0,0,velocity={x:0,y:0}),                        
-                        new InteractiveImage(position={x:182,y:55},12,13,imgMarkPage, 2,0,velocity={x:0,y:0}),
-                        new InteractiveImage(position={x:182,y:69},12,13,imgMarkPage, 3,0,velocity={x:0,y:0})]
+        this.markspages=[new ImageDraw(position={x:20,y:46},12,13,imgMarkPage, 1),
+                        new ImageDraw(position={x:19,y:60},12,13,imgMarkPage, 0),                        
+                        new ImageDraw(position={x:182,y:55},12,13,imgMarkPage, 2),
+                        new ImageDraw(position={x:182,y:69},12,13,imgMarkPage, 3)]
 
     //Seccion TITULOS/DIPLOMAS
         this.maxpages=[0,1,3,2]
@@ -241,8 +221,8 @@ class BookAboutMe{
                             new Text('', 2.5, '#404040', position={x:55, y:48}, 'pixelFont', 'center')]
         this.titlesparagraphs = [new WriteParagraph('',3.5,position={x:119, y:59},30,15,'#404040',4,false),
                                  new WriteParagraph('',3.5,position={x:42, y:59},30,15,'#404040',4,false)]
-        this.bookdecorationright = new BookDecoration(position={x:114, y: 30}, imgPaperBook)
-        this.bookdecorationleft = new BookDecoration(position={x:37, y: 30}, imgPaperBook)
+        this.bookdecorationright = new BookDecoration(position={x:114, y: 30},26,15, imgPaperBook,10)
+        this.bookdecorationleft = new BookDecoration(position={x:37, y: 30},26,15, imgPaperBook,10)
     //Seccion NIVEL DE PROGRAMACION
         this.programlevels=[new BookLevel(position={x:137,y:45}, 8, 'MySQL'),
                             new BookLevel(position={x:137,y:53}, 6, 'XAML'),
@@ -261,18 +241,18 @@ class BookAboutMe{
     }
     draw(){
         //DIBUJAR LIBRO
-        ctx.drawImage(imgBgBook,border.position.x1,border.position.y1);
+        ctx.drawImage(imgBgBook,border.position.x,border.position.y);
         //DIBUJAR MARCAPAGINAS
         this.markspages.forEach((mark)=>{
-            mark.draw()
+            mark.drawSprite()
         })
         //Ajustar tamaño titulo
         if(this.section==2) this.titlestext.size=9*screenSize.multiplier
         else if(this.section==1) this.titlestext.size=7.5*screenSize.multiplier
         else this.titlestext.size=12*screenSize.multiplier   
         //DIBUJAR PASAR PAGINA
-        if(this.page>0)this.nextpageleft.draw()
-        if(this.page<this.maxpages[this.section])this.nextpageright.draw()   
+        if(this.page>0)this.nextpageleft.drawAnimatedSprite()
+        if(this.page<this.maxpages[this.section])this.nextpageright.drawAnimatedSprite()   
     //Seccion SOBRE MI
         if(this.section==0){
             if(this.page==0){
