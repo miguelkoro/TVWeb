@@ -9,7 +9,7 @@ var spacescreen= new SpaceScreen();
 var testtext='Lorem ipsum dolor sit amet consectetur adipiscing elit Sed felis lorem, rhoncus id accumsan id congue et justo. Fusce eget sem mollis';
 var dialogtext=new WriteParagraph(textConvert(testtext, 36),6,position={x:64,y:82}, 121,25,'black',7,true) 
 var dialog=false  
-
+ 
 
 /* VARIABLES PARA SONIDO
 audio.pause();
