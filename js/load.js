@@ -497,6 +497,14 @@ var imgPcToolBar = createImages('img/pc/BarraTareas');
 var imgPcScreen = createImages('img/pc/PantallaWindows');
 var imgPcToolBarScreen = createImages('img/pc/InicioWindows');
 var imgPcIcons = createImages('img/pc/IconosPc');
+var imgPcWindow = createImages('img/pc/PantallaWindows');
+var imgPcExplorerIcon = createImages('img/pc/explorerIcons');
+var imgPcDisk = createImages('img/pc/Disquetera');
+var imgPcLight = createImages('img/pc/PcLights');
+var imgPcWave = createImages('img/pc/PcOnda');
+var imgPcSelectorBar = createImages('img/pc/pcScrollBar');
+var imgPcSelectorButton = createImages('img/pc/pcScrollPoint');
+var imgPcButton = createImages('img/pc/BotonPC');
 //TV
 var imgTvExt = createImages('img/tv/televisionSimp');
 var imgTvColorButtons = createImages('img/tv/SpriteBotones');
@@ -579,79 +587,5 @@ function transitionStages(){
        
 
     })
-}
-//#endregion
-//#region TvInterfaceClass
-class TvInterface{
-    constructor(){
-        
-        this.tvbulbs=[  new ImageDraw(position={x:214,y:13},32,16,imgTvBulb,0,0,'',1,10),//new AnimatedImage(position={x:214,y:13},32,16,imgTvBulb,1,10,0),
-                        new ImageDraw(position={x:214,y:29},32,16,imgTvBulb,0,1,'',1,10),//new AnimatedImage(position={x:214,y:29},32,16,imgTvBulb,1,10,1),
-                        new ImageDraw(position={x:214,y:45},32,16,imgTvBulb,0,2,'',1,10)]//new AnimatedImage(position={x:214,y:45},32,16,imgTvBulb,1,10,2)]
-        this.tvscrews=[ new ImageDraw(position={x:213,y:12},4,4,imgTVScrew),
-                        new ImageDraw(position={x:213,y:58},4,4,imgTVScrew),
-                        new ImageDraw(position={x:243,y:12},4,4,imgTVScrew),
-                        new ImageDraw(position={x:243,y:58},4,4,imgTVScrew)]
-        this.downtvbutton=[new ImageDraw(position={x:210, y:80},19,13,imgTVButton,1,0),
-                            new ImageDraw(position={x:231, y:80}, 19,13,imgTVButton,0,1),
-                            new ImageDraw(position={x:210, y:94}, 19,13,imgTVButton,0,2),
-                            new ImageDraw(position={x:231, y:94}, 19,13,imgTVButton,0,3),
-                            new ImageDraw(position={x:210, y:108}, 19,13,imgTVButton,0,5),
-                            new ImageDraw(position={x:231, y:108}, 19,13,imgTVButton,1,4)
-                            ]
-        this.colortvbuttons=[new ImageDraw(position={x:209, y: 65},13,14,imgTvColorButtons,3,0),
-                            new ImageDraw(position={x:223, y: 65},13,14,imgTvColorButtons,3,1),
-                            new ImageDraw(position={x:237, y: 65},13,14,imgTvColorButtons,3,2)]
-    }
-    draw(){
-        ctx.drawImage(imgTvExt, 0, 0);
-        this.tvbulbs.forEach((bulb)=>{
-            bulb.drawAnimatedSprite()
-        })
-        this.colortvbuttons.forEach((button)=>{
-            button.drawSprite()
-        })
-        this.tvscrews.forEach((screw)=>{
-            screw.draw()
-        })
-        this.downtvbutton.forEach((button)=>{
-            button.drawSprite()
-        })
-        ctx.drawImage(imgTVCover, 211*screenSize.multiplier, 10*screenSize.multiplier);
-    }
-}
-
-class PcInterface{
-    constructor(){
-        this.toolbar= new ImageDraw(position={x:19,y:104},175,8,imgPcToolBar)
-        this.button = new ImageDraw(position = { x: 210, y: 108 }, 19, 13, imgTVButton, 1, 5)
-        this.startbutton = new Border(position = {x:19,y:104}, 36,16)
-        this.toolbarscreen = new ImageDraw(position={x:19,y:41},53,63,imgPcToolBarScreen)
-        this.showtoolbarscreen=false;
-
-        this.trashicon = new ImageDraw(position={x:23,y:21},15,13,imgPcIcons,0,3)
-        this.foldericon = new ImageDraw(position={x:45,y:21}, 15,13, imgPcIcons,0,0)
-        this.date=new Date()
-        this.clock= new WriteText(position={x:186,y:108},50,100,'',15,'bold')
-    }
-    draw(){        
-        ctx.drawImage(imgPcWall, border.position.x, border.position.y);
-        this.toolbar.drawSprite()
-        this.clock.write()
-        this.clock.text=this.getDate()
-        
-
-        this.trashicon.drawSprite()
-        this.foldericon.drawSprite()
-       
-        if(this.showtoolbarscreen)this.toolbarscreen.draw()
-        ctx.drawImage(imgPcExt, 0, 0);
-        this.button.drawSprite()
-        
-    }
-    getDate(){
-        //if(this.date.getMinutes() < 10) 
-        return (this.date.getHours()+':'+(this.date.getMinutes() < 10 ? '0' : '') + this.date.getMinutes());
-    }
 }
 //#endregion
