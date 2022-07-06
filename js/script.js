@@ -3,13 +3,14 @@ var pcinterface = new PcInterface();
 var startscreen= new StartScreen();
 var bookaboutme = new BookAboutMe();
 var spacescreen= new SpaceScreen();
+var connect4 = new Connect4();
 
 
 
 var testtext='Lorem ipsum dolor sit amet consectetur adipiscing elit Sed felis lorem, rhoncus id accumsan id congue et justo. Fusce eget sem mollis';
 var dialogtext=new WriteParagraph(textConvert(testtext, 36),6,position={x:64,y:82}, 121,25,'black',7,true) 
 var dialog=false  
-var test; 
+var colors=[true,true,true]; 
 
 /* VARIABLES PARA SONIDO
 audio.pause();
@@ -81,6 +82,9 @@ function tvClickEvents(click){
                     else if(button.column==3)button.column=1
                     //console.log(tvinterface.tvbulbs[index].row)
                     if(click==1){
+                        if(colors[index])colors[index]=false
+                        else colors[index]=true
+
                         if(tvinterface.tvbulbs[index].row==index){  //Si la luz esta apagada
                             tvinterface.tvbulbs[index].row=3
                             button.column=2
@@ -114,11 +118,18 @@ function tvClickEvents(click){
                         if(index==0){   //Boton play/pause
                             newstage=0
                             button.column=1
-                            tvinterface.downtvbutton[index+1].column=0
+                            tvinterface.downtvbutton[1].column=0
+                            tvinterface.downtvbutton[2].column=0
                         }else if(index==1){ //Boton Sobre Mi
                             newstage=100
                             button.column=1
-                            tvinterface.downtvbutton[index-1].column=0
+                            tvinterface.downtvbutton[0].column=0
+                            tvinterface.downtvbutton[2].column=0
+                        }else if(index==2){ //Boton Minijuegos
+                            newstage=101
+                            button.column=1
+                            tvinterface.downtvbutton[0].column=0
+                            tvinterface.downtvbutton[1].column=0
                         }else if(index==5){ // Boton Silenciar
                             if(button.column==0){
                                 button.column=1
@@ -194,7 +205,8 @@ function showTV(){
         spacescreen.draw()
     else if(stage==100) //SOBRE MI
         bookaboutme.draw() 
-
+    else if(stage==101)
+        connect4.draw() //MINIJUEGO 4 EN RAYA
     if(newstage!=stage || onstagetransition) //TRANSICION
         transitionStages();
 

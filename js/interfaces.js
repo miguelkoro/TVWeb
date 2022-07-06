@@ -64,12 +64,15 @@ class PcWindowExplorer extends ImageDraw{
 class PcInterface{
     constructor(){        
         //this.button = new ImageDraw(position = { x: 210, y: 108 }, 19, 13, imgTVButton, 1, 5)
+        //BOTONES E INTERFAZ DEL PC
         this.button= new ImageDraw(position = {x:210,y:106},13,14, imgPcButton,0,1)
         this.pcdisk= new ImageDraw(position={x:209,y:87}, 42,17,imgPcDisk)
         this.lights=[]
         for(let i=0;i<3;i++){
             this.lights.push(new ImageDraw(position={x:233,y:106+5*i}, 4,4,imgPcLight,0,i,'',1,50))
-            this.lights[i].timecounter=i*Math.floor(Math.random()*10)
+            this.lights[i].timecounter=getRndInteger(5,this.lights[i].maxtimecounter)
+            this.lights[i].random.min=5; this.lights[i].random.max=50;
+            this.lights[i].randomframechange=true
         }
         this.pcselectbar = [new ImageDraw(position={x:212,y:67}, 36,5,imgPcSelectorBar),
                             new ImageDraw(position={x:212,y:78}, 36,5,imgPcSelectorBar)]
@@ -77,13 +80,15 @@ class PcInterface{
                                 new ImageDraw(position={x:215,y:76}, 6,10,imgPcSelectorButton,1)]
         this.pcdisplay= new ImageDraw(position={x:211,y:10},38,55,imgPcWave)
 
-
+        
         this.toolbar= new ImageDraw(position={x:19,y:104},175,8,imgPcToolBar)
         this.startbutton = new Border(position = {x:19,y:104}, 19,16)
         this.toolbarscreen = new ImageDraw(position={x:19,y:41},53,63,imgPcToolBarScreen)
         this.wavedisplay= new ImageDraw(position={x:211,y:10}, 38,54,)
         this.showtoolbarscreen=false;
         this.programs=[]
+        //ESCRITORIO
+        this.desktopicons=[]
 
         this.windowexplorer= new PcWindowExplorer(position={x:43,y:19},175,96,imgPcWindow)
         this.windowinternet= new PcWindowExplorer(position={x:43,y:19},175,96,imgPcWindow)
@@ -123,12 +128,24 @@ class PcInterface{
         this.pcdisk.draw()
         this.button.drawSprite()
         this.pcdisplay.drawSprite()
-        this.lights.forEach((light)=>{
+        /*this.lights.forEach((light)=>{
             light.drawAnimatedSprite()
-        })
+        })*/
+        this.showLights()
         
 
         
+    }
+    showLights(){
+        this.lights.forEach((light,index)=>{
+            if(colors[index]){
+                light.row=index
+                light.drawAnimatedSprite()
+            }else{
+                light.row=3
+                light.drawAnimatedSprite()
+            }
+        })
     }
     getDate(){
         //if(this.date.getMinutes() < 10) 

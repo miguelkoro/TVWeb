@@ -28,6 +28,9 @@ ctx.canvas.height=screenSize.height;
 function sizeConverter(size){
     return size*screenSize.multiplier
 }
+function getRndInteger(min,max){
+    return Math.floor(Math.random() * (max - min) ) + min;
+}
 class Border{
     constructor(position,width,height){
         this.position={x:sizeConverter(position.x), y:sizeConverter(position.y)}
@@ -103,6 +106,8 @@ class ImageDraw extends Border{
         this.rotation=0
         this.rotationspeed=0
         this.blackandwhite=false
+        this.random={min:0,max:0}
+        this.randomframechange=false
     }
     draw(){
         ctx.drawImage(this.image, this.position.x, this.position.y);
@@ -128,17 +133,34 @@ class ImageDraw extends Border{
         //this.draw()
         this.drawSprite()
     }
- 
-    drawAnimatedSprite(){
-        if(this.maxtimecounter!=0){
-            if(this.timecounter<this.maxtimecounter)
-                this.timecounter++
-            else{
-                if(this.column==this.maxframes)this.column=0
-                else this.column++  
-                this.timecounter=0; 
+
+    frameChange(){
+        if(this.randomframechange){
+            if(this.maxtimecounter!=0){
+                if(this.timecounter<this.maxtimecounter)
+                    this.timecounter++
+                else{
+                    if(this.column==this.maxframes)this.column=0
+                    else this.column++  
+                    this.timecounter=getRndInteger(this.random.min,this.random.max); 
+                }
+            }
+        }else{
+            if(this.maxtimecounter!=0){
+                if(this.timecounter<this.maxtimecounter)
+                    this.timecounter++
+                else{
+                    if(this.column==this.maxframes)this.column=0
+                    else this.column++  
+                    this.timecounter=0; 
+                }
             }
         }
+    }
+
+ 
+    drawAnimatedSprite(){
+        this.frameChange()
         ctx.save();
         ctx.translate(this.position.x+this.width/2, this.position.y+this.height/2);
         ctx.rotate(this.rotation*Math.PI/180);
@@ -541,6 +563,9 @@ var imgPaperBook = createImages('img/interface/book/Papiro')
 var imgNextPage = createImages('img/sprites/nextpage/SpritePagina')
 var imgMarkPage = createImages('img/interface/book/SpriteMarcadores')
 var imgBookSocialMedia = createImages('img/book/socialmedia/SpriteSocialMedia')
+//4 EN RAYA
+var imgConnect4Bg = createImages('img/bg/connect4/4enraya')
+var imgConnect4Piece = createImages('img/sprites/connect4/fichas4enraya')
 
 //#endregion
 //#region loadmusic
