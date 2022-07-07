@@ -86,6 +86,13 @@ function tvClickEvents(click){
                         }
                     })
                 }
+                //Boton de reset
+                if(mousePosition(connect4.resetButton)){
+                    if(click==1){
+                        connect4.reset();
+                    }
+                }
+                
             }
         }
     //GENERAL

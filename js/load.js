@@ -365,7 +365,7 @@ class WriteText extends Border{
         ctx.fillStyle=this.fontcolor;
         ctx.textAlign=this.textAlign; 
         ctx.textBaseline = this.textBaseline;
-        ctx.font=this.size*screenSize.multiplier+'px '+this.font;
+        ctx.font=this.fontsize*screenSize.multiplier+'px '+this.fonttype;
         ctx.fillText(this.text, this.position.x, this.position.y);
     }
 }
@@ -567,6 +567,8 @@ var imgBookSocialMedia = createImages('img/book/socialmedia/SpriteSocialMedia')
 var imgConnect4Bg = createImages('img/bg/connect4/4enraya')
 var imgConnect4Piece = createImages('img/sprites/connect4/fichas4enraya')
 var imgConnect4SelectedCol = createImages('img/sprites/connect4/fichaSeleccionada')
+var imgConnect4Reset = createImages('img/sprites/connect4/4enrayaReset')
+var imgConnect4TextBg = createImages('img/sprites/connect4/4enrayaAviso')
 
 //#endregion
 //#region loadmusic
