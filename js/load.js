@@ -566,6 +566,7 @@ var imgBookSocialMedia = createImages('img/book/socialmedia/SpriteSocialMedia')
 //4 EN RAYA
 var imgConnect4Bg = createImages('img/bg/connect4/4enraya')
 var imgConnect4Piece = createImages('img/sprites/connect4/fichas4enraya')
+var imgConnect4SelectedCol = createImages('img/sprites/connect4/fichaSeleccionada')
 
 //#endregion
 //#region loadmusic

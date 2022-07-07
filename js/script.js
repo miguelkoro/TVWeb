@@ -71,6 +71,22 @@ function tvClickEvents(click){
                     }                
                 })
             }
+            // PANTALLA 4 EN RAYA
+            else if(stage == 101){
+                if (connect4.select){//Si esta permitido seleccionar
+                    connect4.columnSelected.forEach((col,i)=>{
+                        if(mousePosition(col[0])  && connect4.boardfull[i]<connect4.numRow){
+                            col[1]=true;
+                            if(click==1){
+                                connect4.putPiece(i)
+                                //console.log(i)
+                            }
+                        }else{
+                            col[1]=false;
+                        }
+                    })
+                }
+            }
         }
     //GENERAL
         //Hacer que solo realice esto cuando el puntero este en la zona de los botones para mas eficiencia
@@ -197,7 +213,7 @@ function dialogText(){
 
 //#region animatefunction
 
-/**DIBUJO POR PANTALLA */
+/**DIBUJO TV POR PANTALLA */
 function showTV(){
     if(stage==0)    //PANTALLA INICIO
         startscreen.draw()//startDraw();
