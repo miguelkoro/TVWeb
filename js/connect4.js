@@ -3,20 +3,20 @@ class Connect4{
         this.numCol=7; //Numero columnas
         this.numRow=5;  //Numero filas
         //this.col=new array(7)
-        this.boardPosition={x:55*screenSize.multiplier,y:95*screenSize.multiplier};
+        this.boardPosition={x:49*screenSize.multiplier,y:95*screenSize.multiplier};
         //this.SelectColPosition={x:54*screenSize.multiplier,y:20*screenSize.multiplier}
         this.select=true; //Para controlar cuando se puede seleccionar una columna
         this.player=1; //Para indicar el jugador activo
 
         //Muestra controles y cosas de la izquierda
-        this.playerCoin= new ImageDraw(position={x:26,y:34},16,16,imgConnect4Piece) //Para dibujar que jugador esta activo en este momento
-        this.playerText= new WriteText(position={x:34,y:43},15,12,'2',15);
-        this.turnText= new WriteText(position={x:35,y:29},15,15,'Player',6,'white')
+        this.playerCoin= new ImageDraw(position={x:23,y:34},16,16,imgConnect4Piece) //Para dibujar que jugador esta activo en este momento
+        this.playerText= new WriteText(position={x:31,y:43},15,12,'2',15);
+        this.turnText= new WriteText(position={x:33,y:29},15,15,'Player',6,'white')
 
         //Muestra avisos de ganador o empate
         this.textbg= new ImageDraw(position={x:55,y:35},109,56,imgConnect4TextBg)
-        this.resetButton= new ImageDraw(position={x:25,y:85},18,18,imgConnect4Reset)
-        this.resetText = new WriteText(position={x:34,y:80},15,15,'Reset',6,'white')
+        this.resetButton= new ImageDraw(position={x:23,y:85},18,18,imgConnect4Reset)
+        this.resetText = new WriteText(position={x:32,y:80},15,15,'Reset',6,'white')
         this.winner=0;
         this.tie=false;
         this.tieText= new WriteText(position={x:110,y:70},15,12,'Empate',16,'white');
@@ -32,7 +32,7 @@ class Connect4{
         this.board= new Array(this.numCol); //Tablero
         for(var i=0;i<this.numCol;i++){
             this.columnSelected[i]=new Array(2)
-            this.columnSelected[i][0]=new Border(position={x:53+i*19,y:17},20,96)
+            this.columnSelected[i][0]=new Border(position={x:47+i*20,y:17},20,96)
             this.columnSelected[i][1]=false 
 
             this.boardfull[i]=0; //Declaramos todas las columnas como que estan vacias
@@ -44,7 +44,8 @@ class Connect4{
             }
         }
 
-        this.pieceSpace = 3* screenSize.multiplier; //Espacio entre fichas
+        this.pieceSpacecol = 4* screenSize.multiplier; //Espacio entre fichas
+        this.pieceSpacerow = 3* screenSize.multiplier; //Espacio entre fichas
         
        // this.board[0][0]=1;
        // this.board[0][1]=1;
@@ -68,7 +69,8 @@ class Connect4{
         for(var i=0;i<this.numCol;i++){ //Dibujamos cada ficha
             for(var j=0; j<this.numRow;j++){
                 if(this.board[i][j]!=0){
-                    this.piece.position=position={x:this.boardPosition.x+this.piece.width*i+this.pieceSpace*i,y:this.boardPosition.y-this.piece.height*j-this.pieceSpace*j};
+                    this.piece.position=position={x:this.boardPosition.x+this.piece.width*i+this.pieceSpacecol*i,
+                                                y:this.boardPosition.y-this.piece.height*j-this.pieceSpacerow*j};
                     this.piece.row=this.board[i][j]-1; //Le ponemos la ficha del jugador
                     this.piece.drawSprite();
                 }             
