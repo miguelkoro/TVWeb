@@ -97,7 +97,7 @@ class PcInterface{
         this.trashicon = new ImageDraw(position={x:23,y:21},15,13,imgPcIcons,0,3)
         this.foldericon = new ImageDraw(position={x:45,y:21}, 15,13, imgPcIcons,0,0)
         this.date=new Date()
-        this.clock= new WriteText(position={x:186,y:108},50,100,'',15,'bold')
+        this.clock= new WriteText(position={x:186,y:108},50,100,'',4,'bold')
     }
     draw(){        
         ctx.drawImage(imgPcWall, border.position.x, border.position.y);
