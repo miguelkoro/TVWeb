@@ -19,6 +19,7 @@ class Connect4{
         this.resetText = new WriteText(position={x:34,y:80},15,15,'Reset',6,'white')
         this.winner=0;
         this.tie=false;
+        this.tieText= new WriteText(position={x:110,y:70},15,12,'Empate',16,'white');
         this.winnerText= new WriteText(position={x:110,y:58},15,12,'Ganador:',14,'white');
         this.winnerPlayerText= new WriteText(position={x:110,y:78},15,12,'',10,'white');
         
@@ -84,13 +85,16 @@ class Connect4{
         //Dibuja la pantalla de ganador o empate
         if(this.winner!=0){
             this.textbg.draw();
-            if(!this.tie){ //Si no ha sido un empate
-                this.winnerPlayerText.text='Jugador '+this.player;
-                if(this.winner==1)this.winnerPlayerText.fontcolor='#d9d141'; else this.winnerPlayerText.fontcolor='#962121'
-                this.winnerPlayerText.write()
-                this.winnerText.write()
-                //this.playAgainText.write()
-            }
+           
+            this.winnerPlayerText.text='Jugador '+this.player;
+            if(this.winner==1)this.winnerPlayerText.fontcolor='#d9d141'; else this.winnerPlayerText.fontcolor='#ed6868'
+            this.winnerPlayerText.write()
+            this.winnerText.write()
+            //this.playAgainText.write()            
+        }
+        if(this.tie){
+            this.textbg.draw();
+            this.tieText.write()
         }
 
     }
@@ -101,7 +105,7 @@ class Connect4{
         this.boardfull[col]++;
         
         if(this.check4Connected(col, this.boardfull[col]-1)){ //Si hay 4 en raya pantalla de ganador
-            console.log('El jugador: ' + this.player + ' ha hecho 4 en raya!')
+            //console.log('El jugador: ' + this.player + ' ha hecho 4 en raya!')
             this.winner=this.player;
             //Desmarca la seleccion
             this.select=false;
@@ -156,7 +160,7 @@ class Connect4{
         }
 
 
-        //Diagonal
+        //Diagonal Abajo hacia arriba /
         //console.log(col+' '+ row + ', ')
         if(col<=row){ //Si el numero de columna es menor que el de la fila
             var tempcolumn=0
@@ -175,7 +179,7 @@ class Connect4{
             var temprow=0;
             connected=0
             for(var i=col-row;i<this.numCol;i++){
-                console.log(i+' '+ row + ', ')
+                //console.log(i+' '+ row + ', ')
                 if(this.board[i][temprow]==this.player){
                     connected++;
                     if(connected==4)return true
@@ -183,6 +187,44 @@ class Connect4{
                 }else{ connected=0}
                 temprow++;
             }
+        }
+        //Diagonal arriba hacia abajo \
+        if(row+col>=this.numCol){ //34-61
+            var tempcol=this.numCol-1;
+            connected=0
+            for(var i=row-(this.numCol-1-col);i<this.numRow;i++){ //Controlamos las filas
+                if(this.board[tempcol][i]==this.player){
+                    connected++;
+                    if(connected==4)return true
+                    
+                }else{ connected=0}
+                tempcol--;
+            }
+
+        }else if(row+col<this.numRow){ //04-40
+            //console.log('5')
+            var tempcol=0;
+            connected=0
+            for(var i=col+row; i>=0; i--){
+                if(this.board[tempcol][i]==this.player){
+                    connected++;
+                    if(connected==4)return true
+                    
+                }else{ connected=0}
+                tempcol++;
+            }
+        }else{ //Manejamos las filas
+            var tempcol=col+row;
+            connected=0;
+            for(var i=0;i<this.numRow;i++){
+                if(this.board[tempcol][i]==this.player){
+                    connected++;
+                    if(connected==4)return true
+                    
+                }else{ connected=0}
+                tempcol--;
+            }
+
         }
         //console.log(col+' '+ row + ', ')
        
