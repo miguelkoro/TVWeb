@@ -569,6 +569,13 @@ var imgConnect4Piece = createImages('img/sprites/connect4/fichas4enraya')
 var imgConnect4SelectedCol = createImages('img/sprites/connect4/fichaSeleccionada')
 var imgConnect4Reset = createImages('img/sprites/connect4/4enrayaReset')
 var imgConnect4TextBg = createImages('img/sprites/connect4/4enrayaAviso')
+//ARCADE
+var imgArcadeBg = createImages('img/bg/arcade/fondorecreativa')
+var imgArcadeMachines = createImages('img/sprites/arcade/recreativas')
+var imgArcadeArrow = createImages('img/sprites/arcade/flechasarcade')
+var imgArcadePacman = createImages('img/sprites/arcade/comecocosSprite')
+var imgArcadeSign = createImages('img/sprites/arcade/cartelarcade')
+var imgArcadeMinigames = createImages('img/sprites/arcade/SpriteMinigames')
 
 //#endregion
 //#region loadmusic

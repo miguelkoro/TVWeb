@@ -1,6 +1,7 @@
 var tvinterface= new TvInterface();
 var pcinterface = new PcInterface();
 var startscreen= new StartScreen();
+var arcade = new Arcade();
 var bookaboutme = new BookAboutMe();
 var spacescreen= new SpaceScreen();
 var connect4 = new Connect4();
@@ -70,6 +71,25 @@ function tvClickEvents(click){
                         }
                     }                
                 })
+            }
+            //PANTALLA ARCADE
+            else if(stage==2){
+                //Flechas de cambiar de sala
+                if(mousePosition(arcade.arrowLeft)) arcade.arrowLeft.column=1
+                else arcade.arrowLeft.column=0
+                if(mousePosition(arcade.arrowRight)) arcade.arrowRight.column=1
+                else arcade.arrowRight.column=0
+                //Funcion de cada recreativa
+                arcade.machines.forEach((machine,index)=>{
+                    if(mousePosition(machine)){
+                        if(index==0){
+                            if(click==1){
+                                newstage=101
+                            }
+                        }
+                    }
+                })
+                
             }
             // PANTALLA 4 EN RAYA
             else if(stage == 101){
@@ -152,7 +172,7 @@ function tvClickEvents(click){
                             tvinterface.downtvbutton[0].column=0
                             tvinterface.downtvbutton[2].column=0
                         }else if(index==2){ //Boton Minijuegos
-                            newstage=101
+                            newstage=2
                             button.column=1
                             tvinterface.downtvbutton[0].column=0
                             tvinterface.downtvbutton[1].column=0
@@ -229,6 +249,8 @@ function showTV(){
         startscreen.draw()//startDraw();
     else if(stage==1) //ESPACIO
         spacescreen.draw()
+    else if(stage==2)
+        arcade.draw()
     else if(stage==100) //SOBRE MI
         bookaboutme.draw() 
     else if(stage==101)

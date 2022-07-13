@@ -105,7 +105,7 @@ class PcInterface{
         ctx.fillStyle='white'
         this.clock.write()
         this.clock.text=this.getDate()
-        
+        this.date=new Date();
 
         this.trashicon.drawSprite()
         this.foldericon.drawSprite()
