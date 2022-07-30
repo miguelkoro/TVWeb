@@ -8,6 +8,11 @@ class Connect4{
         this.select=true; //Para controlar cuando se puede seleccionar una columna
         this.player=1; //Para indicar el jugador activo
 
+        this.mode=0 //Modo de juego 1-2jugadores, 2-jugadorvspc
+        this.twoplayer=new ImageDraw(position={x:60,y:45},39,34,imgConnect4PlayerChoice,0,0)
+        this.playervscpu=new ImageDraw(position={x:120,y:45},39,34,imgConnect4PlayerChoice,0,1)
+        this.selectMode=true;
+
         //Muestra controles y cosas de la izquierda
         this.playerCoin= new ImageDraw(position={x:23,y:34},16,16,imgConnect4Piece) //Para dibujar que jugador esta activo en este momento
         this.playerText= new WriteText(position={x:31,y:43},15,12,'2',15);
@@ -64,7 +69,7 @@ class Connect4{
         this.resetButton.drawSprite();
         this.resetText.write()
 
-
+        
 
         for(var i=0;i<this.numCol;i++){ //Dibujamos cada ficha
             for(var j=0; j<this.numRow;j++){
@@ -75,8 +80,12 @@ class Connect4{
                     this.piece.drawSprite();
                 }             
             }
-            //Si una columna esta siendo seleccionada la mostramos el recuadro
-            if(this.columnSelected[i][1]){ //Si esta siendo seleccionada mostramos la seleccion
+            if(this.mode==0){
+                this.select=false;
+                this.twoplayer.drawSprite()
+                this.playervscpu.drawSprite()
+            }//Si una columna esta siendo seleccionada la mostramos el recuadro
+            else if(this.columnSelected[i][1]){ //Si esta siendo seleccionada mostramos la seleccion
                 this.selectedCol.column=this.player-1 //Elegimos quien selecciona
                 this.selectedCol.position=this.columnSelected[i][0].position; //Le ponemos la posicion que le corresponde
                 this.selectedCol.drawSprite()
@@ -115,12 +124,20 @@ class Connect4{
                 this.columnSelected[i][1]=false;
             }
            
-        }else{
+        }else if(this.mode==1){
             if(this.player==1){
                 this.player=2
             }else{
                 this.player=1
             }   
+        }else{
+            if(this.player==1){
+                this.player=2
+                //cpuTurn()
+                this.putPiece(this.max(this.board, this.boardfull))
+            }else{
+                this.player=1
+            }  
         }
 
         //Comprobamos que no este ya el tablero completo
@@ -138,6 +155,116 @@ class Connect4{
             }
         }
     }
+
+    euristic(board, boardfull){
+        var player1=0;  
+        var player2=0;
+        var player1counter=0
+        var player2counter=0
+        var emptycounter=0
+        //verticales
+        
+        for(var i=0;i<this.numCol;i++){
+            if(boardfull[i]!=0){
+                for(var j=0;j<this.numRow;j++){
+                   if(board[i][j]==1){  //Vamos contabilizando las fichas de cada jugador de cada columna
+                        player1counter++//Si hay una del jugador uno 
+                        player2counter=0
+                   }else if(board[i][j]==2){
+                        player2counter++
+                        player1counter=0
+                   }else{
+                       emptycounter++
+                   }
+                }
+                if(player1counter+emptycounter>=4){
+                    player1=+player1counter
+                }
+                if(player2counter+emptycounter>=4){
+                    player2=+player2counter
+                }
+                player1counter=0
+                player2counter=0
+                emptycounter=0
+
+            }
+
+        }
+
+
+        //horizontal
+        //player1counter=0
+        //player2counter=0
+        //emptycounter=0
+        var playerchange=true
+        for(var j=0;j<this.numRow;j++){
+            for(var i=0;i<this.numCol;i++){
+                if(board[i][j]==1){
+                    
+                }else if(board[i][j]==2){
+
+                }else{
+                    emptycounter++
+                }
+            }
+            player1counter=0
+            player2counter=0
+            emptycounter=0
+        }
+
+    }
+
+    min(board, boardfull){
+        //Que cuente y saque el euristico de cada posibilidad y devuelva el menor de ellos, return de la columna y el euristico
+        //Se hace como si el jugador hiciese cada una de sus posibles juugadas y se saca el euristico, 
+        //de cada jugada del jugador 1 se coge en la que el jugador 1 hace la mejor jugada
+        var worst=-100
+        var id
+        
+        //console.log('tempboardfull: ' + boardfull)
+                //console.log('tempboard: ' +board)
+        return worst
+    }
+    max(board,boardfull){
+        //Por cada columna, ver si se puede poner ficha y que el bucle devuelva el mejor movimiento posible (La columna)
+        //De cada columna sacar el min
+        var best=[0,-100]
+        var newmin
+        
+        //tempboard=board
+        //tempboardfull=boardfull
+        //console.log(this.boardfull);
+        for(var i=0;i<this.numCol;i++){
+            var tempboard=[] 
+                for(var j=0;j<this.numCol;j++){
+                   //console.log('longitud:' +this.board.length)
+                    tempboard.push(board[j].slice())
+                }
+                var tempboardfull = boardfull.slice()
+            if(this.boardfull[i]<this.numRow){ //Si la columna no esta completa
+                //var board= this.board
+                
+                
+                //var boardfull= this.boardfull
+                tempboard[i][tempboardfull[i]]=this.player
+                tempboardfull[i]++
+                //console.log(tempboard)
+                newmin=this.min(tempboard, tempboardfull)
+                if(i[1]>best[1]){
+                    //best=newmin;
+                }
+            }
+        }
+        //console.log('tempboardfull: ' + tempboardfull)
+                //console.log('tempboard: ' +tempboard)
+        return best[0];
+    }
+
+    cpuTurn(){
+        
+        this.putPiece(0)
+    }
+
     check4Connected(col,row){
         var connected=0;
         //Horizontal

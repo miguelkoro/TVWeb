@@ -61,6 +61,76 @@ class PcWindowExplorer extends ImageDraw{
     }
 }
 
+
+class PcWave extends Border{
+    constructor(position, width, height){
+        super(position, width, height)
+        this.lenght=0.15
+        this.frequency=0.1
+        this.amplitude=80
+        //this.color='red'
+        this.increment=this.frequency;
+        this.size=0.8*screenSize.multiplier
+    }
+
+    draw(){
+        ctx.beginPath();
+        ctx.moveTo(this.position.x+this.width/2,this.position.y);
+        ctx.strokeStyle=stringcolors[displaycolor];
+        console.log(displaycolor)
+        console.log('Azul: ' + colors[0] + ' Rojo: ' + colors[1] + ' Amarillo: ' + colors[2])
+        ctx.lineWidth = this.size;
+        for(let i=0; i<this.position.y+this.height;i++){
+            
+            ctx.lineTo(this.position.x+this.width /2 + Math.sin(i * this.lenght + this.increment) * this.amplitude,this.position.y+i);
+            
+        }
+        //ctx.lineTo(this.position.x+this.width,this.position.y+this.height/2);
+        ctx.stroke();
+        this.increment+=this.frequency
+    }
+    drawPortrait(){
+        ctx.beginPath();
+        ctx.moveTo(this.position.x,this.position.y+this.height/2);
+        ctx.strokeStyle=stringcolors[displaycolor];
+        ctx.lineWidth = this.size;
+        for(let i=0; i<this.position.x+this.width;i++){
+            
+            ctx.lineTo(this.position.x+i, this.position.y+this.height /2 + Math.sin(i * this.lenght + this.increment) * this.amplitude);
+            
+        }
+        //ctx.lineTo(this.position.x+this.width,this.position.y+this.height/2);
+        ctx.stroke();
+        this.increment+=this.frequency
+    }
+}
+
+class PcWaveBar {
+    constructor(bar, pointer, min, max){
+        this.pointer= pointer
+        this.bar=bar
+        this.min=min
+        this.max=max
+        this.value=0
+    }
+    draw(){
+        this.bar.drawSprite()
+        this.pointer.drawSprite()
+    }
+    move(){
+        if(mousemove.x>this.bar.position.x && mousemove.x<this.bar.position.x+this.bar.width){
+            this.pointer.position.x=mousemove.x-this.pointer.width/2
+            this.value = (this.max-this.min)*((mousemove.x-this.bar.position.x)/this.bar.width)
+            this.value += this.min
+            console.log(this.value)
+
+            //this.pointerposition=
+
+        }
+    }
+
+}
+
 class PcInterface{
     constructor(){        
         //this.button = new ImageDraw(position = { x: 210, y: 108 }, 19, 13, imgTVButton, 1, 5)
@@ -74,19 +144,34 @@ class PcInterface{
             this.lights[i].random.min=5; this.lights[i].random.max=50;
             this.lights[i].randomframechange=true
         }
-        this.pcselectbar = [new ImageDraw(position={x:212,y:67}, 36,5,imgPcSelectorBar),
-                            new ImageDraw(position={x:212,y:78}, 36,5,imgPcSelectorBar)]
-        this.pcselectpointer = [new ImageDraw(position={x:229,y:65}, 6,10,imgPcSelectorButton,0),
-                                new ImageDraw(position={x:215,y:76}, 6,10,imgPcSelectorButton,1)]
+       // this.pcselectbar = [,
+     //                       ]
+     //   this.pcselectpointer = [,
+    //                            ]
         this.pcdisplay= new ImageDraw(position={x:211,y:10},38,55,imgPcWave)
 
-        
+        this.wave= new PcWave(position={x:212,y:10},36,44)
+        //Array de las barras para modificar la onda
+        this.pcwavebars=[new PcWaveBar(new ImageDraw(position={x:212,y:67}, 36,5,imgPcSelectorBar),
+                                        new ImageDraw(position={x:220,y:65}, 6,10,imgPcSelectorButton,0),
+                                        20,100),
+                        new PcWaveBar(new ImageDraw(position={x:212,y:78}, 36,5,imgPcSelectorBar),
+                                        new ImageDraw(position={x:235,y:76}, 6,10,imgPcSelectorButton,1),
+                                        0.05,0.25)]
+
+        this.wave.amplitude= ((this.pcwavebars[0].max-this.pcwavebars[0].min)*((this.pcwavebars[0].pointer.position.x-this.pcwavebars[0].bar.position.x)/this.pcwavebars[0].bar.width))+this.pcwavebars[0].min
+        this.wave.lenght= ((this.pcwavebars[1].max-this.pcwavebars[1].min)*((this.pcwavebars[1].pointer.position.x-this.pcwavebars[1].bar.position.x)/this.pcwavebars[1].bar.width))+this.pcwavebars[1].min
+         
+
         this.toolbar= new ImageDraw(position={x:19,y:104},175,8,imgPcToolBar)
         this.startbutton = new Border(position = {x:19,y:104}, 19,16)
         this.toolbarscreen = new ImageDraw(position={x:19,y:41},53,63,imgPcToolBarScreen)
         this.wavedisplay= new ImageDraw(position={x:211,y:10}, 38,54,)
         this.showtoolbarscreen=false;
         this.programs=[]
+
+       
+
         //ESCRITORIO
         this.desktopicons=[]
 
@@ -119,11 +204,11 @@ class PcInterface{
         if(this.showtoolbarscreen)this.toolbarscreen.draw()
         ctx.drawImage(imgPcExt, 0, 0);
 
-        this.pcselectbar.forEach((bar)=>{
-            bar.drawSprite()
-        })
-        this.pcselectpointer.forEach((button)=>{
-            button.drawSprite()
+        //this.pcselectbars.forEach((bar)=>{
+        //    bar.drawSprite()
+       // })
+        this.pcwavebars.forEach((bar)=>{
+            bar.draw()
         }) 
         this.pcdisk.draw()
         this.button.drawSprite()
@@ -132,7 +217,8 @@ class PcInterface{
             light.drawAnimatedSprite()
         })*/
         this.showLights()
-        
+       // this.wave.drawGrid()
+        this.wave.draw()
 
         
     }

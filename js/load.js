@@ -569,6 +569,7 @@ var imgConnect4Piece = createImages('img/sprites/connect4/fichas4enraya')
 var imgConnect4SelectedCol = createImages('img/sprites/connect4/fichaSeleccionada')
 var imgConnect4Reset = createImages('img/sprites/connect4/4enrayaReset')
 var imgConnect4TextBg = createImages('img/sprites/connect4/4enrayaAviso')
+var imgConnect4PlayerChoice = createImages('img/sprites/connect4/4enrayaJugador')
 //ARCADE
 var imgArcadeBg = createImages('img/bg/arcade/fondorecreativa')
 var imgArcadeMachines = createImages('img/sprites/arcade/recreativas')
@@ -592,7 +593,7 @@ gothicFont.load().then(function(font){document.fonts.add(font); });
 //#region var
 /** VARIABLES DE TECLADO Y RATON */
 const keys = {right:{pressed:false},left:{pressed:false},down:{pressed:false},up:{pressed:false},space:{pressed:false}}
-const mousemove={x:0, y:0}
+const mousemove={x:0, y:0, mouseDown:false}
 /** VARIABLE ENTRE PC Y TV */
 var state=0 //0->TV, 1->PC
 /** VARIABLE DE ETAPAS DE LA TV*/

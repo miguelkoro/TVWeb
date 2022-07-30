@@ -11,7 +11,32 @@ var connect4 = new Connect4();
 var testtext='Lorem ipsum dolor sit amet consectetur adipiscing elit Sed felis lorem, rhoncus id accumsan id congue et justo. Fusce eget sem mollis';
 var dialogtext=new WriteParagraph(textConvert(testtext, 36),6,position={x:64,y:82}, 121,25,'black',7,true) 
 var dialog=false  
-var colors=[true,true,true]; 
+var colors=[true,true,true]; //Azul, Rojo, Amarillo
+var stringcolors=['#292929','#274bd9','#ac3232','#ccc42d','#826fb3','#85c341','#f2a01f','#e0e0c5']  //Negro, Azul, Rojo, Amarillo, Morado, Verde, Naranja, Dorado?
+var displaycolor=7;
+
+function changeColor(){
+    if(colors[0] && colors[1] && colors[2]){ //Estan todos los colores activados
+        displaycolor=7
+        //Color Dorado??
+    }else if(colors[0] && colors[1]){ //Morado
+        displaycolor=4
+    }else if(colors[0] && colors[2]){ //Verde
+        displaycolor=5
+    }else if(colors[1] && colors[2]){ //Naranja
+        displaycolor=6
+    }else if(colors[0]){ //Azul
+        displaycolor=1
+    }else if(colors[1]){ //Rojo
+        displaycolor=2
+    }else if(colors[2]) { //Amarillo
+        displaycolor=3
+    }else{ //Negro
+        displaycolor=0
+    }
+    console.log(displaycolor)
+}
+changeColor()
 
 /* VARIABLES PARA SONIDO
 audio.pause();
@@ -84,7 +109,14 @@ function tvClickEvents(click){
                     if(mousePosition(machine)){
                         if(index==0){
                             if(click==1){
+                                connect4.select=false;
                                 newstage=101
+                                //Reset del 4 en raya, modo elegir jugador
+                                
+                                connect4.selectMode=true;
+                                connect4.mode=0
+                                connect4.reset()
+                                
                             }
                         }
                     }
@@ -105,6 +137,30 @@ function tvClickEvents(click){
                             col[1]=false;
                         }
                     })
+                }
+                if(connect4.selectMode){ //Seleccion de modo de juego
+                    if(mousePosition(connect4.twoplayer)){
+                        if(click==1){
+                            connect4.mode=1
+                            connect4.selectMode=false
+                            connect4.select=true;
+
+                        }
+                        connect4.twoplayer.column=1
+                    }else{
+                         connect4.twoplayer.column=0   
+                    }
+                    if(mousePosition(connect4.playervscpu)){
+                        if(click==1){
+                            connect4.mode=2
+                            connect4.selectMode=false
+                            connect4.select=true;
+                        }
+                        connect4.playervscpu.column=1
+                    }else{
+                         connect4.playervscpu.column=0   
+                    }
+                    
                 }
                 //Boton de reset
                 if(mousePosition(connect4.resetButton)){
@@ -147,7 +203,9 @@ function tvClickEvents(click){
                                     velocity={x:(Math.random()-0.5)*2, y:(Math.random()-0.5)*2}, startscreen.colors[index])
                                 )
                             }
-                        }                
+                        }
+                        //cambio de color pricipal
+                        changeColor()                
                     }
                 }else{                                              //Se pone el boton como no marcado
                     if(button.column==0)button.column=2
@@ -201,6 +259,7 @@ function tvClickEvents(click){
 }
 
 function pcClickEvents(click) {
+    //PANTALLA
     if (mousePosition(border)) {
         if (mousePosition(pcinterface.startbutton)) {
             if (click == 1) {
@@ -214,15 +273,31 @@ function pcClickEvents(click) {
                 }
             }
         }
+        
     }
-
+    //PANEL CONTROL
     if (mousePosition(controlerborder)) {
         //console.log('Activo')
+        //BOTON APAGADO
         if (mousePosition(pcinterface.button)) {            
             if (click == 1) {
                 document.body.style.backgroundColor = "#733f29";
                 state = 0                
             }
+        }
+        //Controlador ondas
+        else if(mousePosition(pcinterface.pcwavebars[0].pointer)){  //amplitud ondas
+            if(mousemove.mouseDown){
+                pcinterface.pcwavebars[0].move()
+                pcinterface.wave.amplitude=pcinterface.pcwavebars[0].value
+            }
+        }else if(mousePosition(pcinterface.pcwavebars[1].pointer)){ //longitud ondas
+            if(mousemove.mouseDown){
+                pcinterface.pcwavebars[1].move()
+                pcinterface.wave.lenght=pcinterface.pcwavebars[1].value
+                //console.log('fff')
+            }
+            //console.log('aaa')
         }       
     }
 }
@@ -354,4 +429,10 @@ window.addEventListener("click", function(e) {
     
 });
 
+window.addEventListener('mousedown', function(e){
+    mousemove.mouseDown=true
+})
+window.addEventListener('mouseup', function(e){
+    mousemove.mouseDown=false
+})
 //#endregion
