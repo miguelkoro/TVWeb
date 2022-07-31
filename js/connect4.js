@@ -115,7 +115,7 @@ class Connect4{
         //console.log(this.boardfull[col])
         this.boardfull[col]++;
         
-        if(this.check4Connected(col, this.boardfull[col]-1)){ //Si hay 4 en raya pantalla de ganador
+        if(this.check4Connected(col, this.boardfull[col]-1, this.board, this.player)){ //Si hay 4 en raya pantalla de ganador
             //console.log('El jugador: ' + this.player + ' ha hecho 4 en raya!')
             this.winner=this.player;
             //Desmarca la seleccion
@@ -157,6 +157,8 @@ class Connect4{
     }
 
     euristic(board, boardfull){
+        //Antes de llamar a este metodo mirar si se hace 4 en raya para mas eficiencia
+
         var player1=0;  
         var player2=0;
         var player1counter=0
@@ -168,16 +170,16 @@ class Connect4{
             if(boardfull[i]!=0){
                 for(var j=0;j<this.numRow;j++){
                    if(board[i][j]==1){  //Vamos contabilizando las fichas de cada jugador de cada columna
-                        player1counter++//Si hay una del jugador uno 
+                        player1counter++//Si hay una del jugador uno, se pone el jugador 2 a 0 y viceverse 
                         player2counter=0
                    }else if(board[i][j]==2){
                         player2counter++
                         player1counter=0
                    }else{
-                       emptycounter++
+                       emptycounter++ //Se suman los espacios vacios de cada columna de abajo a arriba
                    }
                 }
-                if(player1counter+emptycounter>=4){
+                if(player1counter+emptycounter>=4){ //Si hay al menos una ficha del jugador 1 y con al menos 3 espacios en blanco arriba, puede hacer 4 en raya
                     player1=+player1counter
                 }
                 if(player2counter+emptycounter>=4){
@@ -188,29 +190,48 @@ class Connect4{
                 emptycounter=0
 
             }
-
         }
-
-
         //horizontal
         //player1counter=0
         //player2counter=0
         //emptycounter=0
+        /**
+         * Recorremos
+         */
         var playerchange=true
         for(var j=0;j<this.numRow;j++){
-            for(var i=0;i<this.numCol;i++){
-                if(board[i][j]==1){
-                    
-                }else if(board[i][j]==2){
-
-                }else{
-                    emptycounter++
+            for(var i=0;i<this.numCol-3;i++){   //Comprobamos cada fila, y cogemos las columnas de 4 en 4
+                for (var m=0; m<4; m++){
+                    if(board[i+m][j]==1){   //Si hay una ficha de jugador 1 se va sumando
+                        player1counter++
+                        player2counter=0
+                    }else if(board[i+m][j]==2){ //Si entre medias hay una del jugador 2 (o viceversa) se borra el contador del jugador 1 
+                        player1counter++
+                        player2counter=0
+                    }else{
+                        emptycounter++
+                    }                    
                 }
+
+                if(player1counter+emptycounter>=4){ //Si las fichas de un jugador mas los espacios vacios alrededor suman 4, significa que puede hacer 4 en raya
+                    player1+=player1counter
+                }else if(player2counter+emptycounter>=4){
+                    player2+=player2counter
+                }
+                player1counter=0
+                player2counter=0
+                emptycounter=0
             }
-            player1counter=0
-            player2counter=0
-            emptycounter=0
+            //player1counter=0
+            //player2counter=0
+            //emptycounter=0
         }
+
+        //Diagonal
+
+
+        //Calculo
+        return player2-player1
 
     }
 
@@ -218,18 +239,38 @@ class Connect4{
         //Que cuente y saque el euristico de cada posibilidad y devuelva el menor de ellos, return de la columna y el euristico
         //Se hace como si el jugador hiciese cada una de sus posibles juugadas y se saca el euristico, 
         //de cada jugada del jugador 1 se coge en la que el jugador 1 hace la mejor jugada
-        var worst=-100
-        var id
-        
-        //console.log('tempboardfull: ' + boardfull)
-                //console.log('tempboard: ' +board)
+        var worst=100
+        var euristic
+        for(var i=0;i<this.numCol;i++){
+            var tempboard=[] 
+                for(var j=0;j<this.numCol;j++){ //Copiamos la tabla y la columna en nuevos array y matriz debido a que se pasa por referencia
+                    tempboard.push(board[j].slice())
+                }
+                var tempboardfull = boardfull.slice()
+            if(tempboardfull[i]<this.numRow){ //Si la columna no esta completa/llena
+                tempboard[i][tempboardfull[i]]=1 //Se añade en el nuevo tablero creado, la ficha del jugador1 en cada columna no completa, y se hace el min
+                tempboardfull[i]++
+
+                if(!this.check4Connected(i, tempboardfull[i]-1,tempboard,1)){ //comprobamos que el jugador 1 no hace 4 en raya
+                    //console.log(tempboard)
+                    euristic=this.euristic(tempboard, tempboardfull) //Guardamos el eureliano
+                    
+                    if(euristic<worst){  //Si el nuevo euleriano es peor que el anterior, lo guardamos
+                        worst=euristic;
+                    }
+                }else{
+                    return -100    //Si hay 4 en raya devolvemos esa columna, ya que es una derrota asegurada, la pondremos como la peor jugada
+                }
+            }
+
+        }
         return worst
     }
     max(board,boardfull){
         //Por cada columna, ver si se puede poner ficha y que el bucle devuelva el mejor movimiento posible (La columna)
         //De cada columna sacar el min
-        var best=[0,-100]
-        var newmin
+        var best=[0,-100] //Columna, euristico
+        var newmin=[0,0]
         
         //tempboard=board
         //tempboardfull=boardfull
@@ -241,35 +282,74 @@ class Connect4{
                     tempboard.push(board[j].slice())
                 }
                 var tempboardfull = boardfull.slice()
-            if(this.boardfull[i]<this.numRow){ //Si la columna no esta completa
+            if(tempboardfull[i]<this.numRow){ //Si la columna no esta completa/llena
                 //var board= this.board
                 
                 
                 //var boardfull= this.boardfull
-                tempboard[i][tempboardfull[i]]=this.player
+                tempboard[i][tempboardfull[i]]=this.player //Se añade en el nuevo tablero creado, la ficha del jugador2 en cada columna no completa, y se hace el min
                 tempboardfull[i]++
-                //console.log(tempboard)
-                newmin=this.min(tempboard, tempboardfull)
-                if(i[1]>best[1]){
-                    //best=newmin;
+                //Comprobamos si hace 4 en raya para ahorrar el tener que sacar el min y el euristico
+                if(!this.check4Connected(i,tempboardfull[i]-1,tempboard,this.player)){
+                    //console.log(tempboard)
+                    newmin[1]=this.min(tempboard, tempboardfull) //Guardamos el eureliano
+                    newmin[0]=i //Guardamos en que columna esta
+                    if(newmin[1]>best[1]){  //Si el nuevo euleriano es mejor que el anterior, lo guardamos
+                        best[1]=newmin[1];
+                        best[0]=newmin[0]
+                        console.log('best max: ' + best)
+                    }
+                }else{
+                    return i    //Si hay 4 en raya devolvemos esa columna, ya que es una victoria asegurada y no hay que seguir recorriendo la tabla
                 }
             }
         }
         //console.log('tempboardfull: ' + tempboardfull)
                 //console.log('tempboard: ' +tempboard)
-        return best[0];
+        return best[0]; //Devolvemos la columna con el mayor euleriano conseguido
+    }
+
+    checkPlayer1(){
+        for(var i=0;i<this.numCol;i++){
+            var tempboard=[] 
+                for(var j=0;j<this.numCol;j++){
+                   //console.log('longitud:' +this.board.length)
+                    tempboard.push(this.board[j].slice())
+                }
+                var tempboardfull = this.boardfull.slice()
+            if(tempboardfull[i]<this.numRow){ //Si la columna no esta completa/llena
+                //var board= this.board
+                
+                
+                //var boardfull= this.boardfull
+                tempboard[i][tempboardfull[i]]=1 //Se añade en el nuevo tablero creado, la ficha del jugador2 en cada columna no completa, y se hace el min
+                tempboardfull[i]++
+                //Comprobamos si hace 4 en raya para ahorrar el tener que sacar el min y el euristico
+                if(this.check4Connected(i,tempboardfull[i]-1,tempboard,1)){
+                    return i
+                }
+            }
+        }
+        return -1
     }
 
     cpuTurn(){
-        
-        this.putPiece(0)
+        //si el jugador 1 hara 4 en raya, lo ponemos donde lo haria
+        var checkplayer=this.checkPlayer1()
+
+        if(checkplayer<0){
+            this.putPiece(checkplayer)
+        }else{
+            this.putPiece(this.max(this.board,this.boardfull))
+        }
     }
 
-    check4Connected(col,row){
+    check4Connected(col,row, board, player){ //añadir el jugador, board 
         var connected=0;
+        //console.log(board)
         //Horizontal
         for(var i=0; i<this.numCol;i++){
-            if(this.board[i][row]==this.player){
+            if(board[i][row]==player){
                 connected++;
                 if(connected==4)return true;
             }else{
@@ -280,7 +360,7 @@ class Connect4{
         //Vertical
         connected=0;
         for(var j=0; j<this.numRow;j++){
-            if(this.board[col][j]==this.player){
+            if(board[col][j]==player){
                 connected++;
                 if(connected==4)return true;
             }else{
@@ -296,7 +376,7 @@ class Connect4{
             connected=0
             for(var i=row-col;i<this.numRow;i++){
                 //console.log(column+' '+ i + ', ')
-                if(this.board[tempcolumn][i]==this.player){
+                if(board[tempcolumn][i]==player){
                     connected++;
                     if(connected==4)return true
                 }else{
@@ -309,7 +389,7 @@ class Connect4{
             connected=0
             for(var i=col-row;i<this.numCol;i++){
                 //console.log(i+' '+ row + ', ')
-                if(this.board[i][temprow]==this.player){
+                if(board[i][temprow]==player){
                     connected++;
                     if(connected==4)return true
                     
@@ -322,7 +402,7 @@ class Connect4{
             var tempcol=this.numCol-1;
             connected=0
             for(var i=row-(this.numCol-1-col);i<this.numRow;i++){ //Controlamos las filas
-                if(this.board[tempcol][i]==this.player){
+                if(board[tempcol][i]==player){
                     connected++;
                     if(connected==4)return true
                     
@@ -335,7 +415,7 @@ class Connect4{
             var tempcol=0;
             connected=0
             for(var i=col+row; i>=0; i--){
-                if(this.board[tempcol][i]==this.player){
+                if(board[tempcol][i]==player){
                     connected++;
                     if(connected==4)return true
                     
@@ -346,7 +426,7 @@ class Connect4{
             var tempcol=col+row;
             connected=0;
             for(var i=0;i<this.numRow;i++){
-                if(this.board[tempcol][i]==this.player){
+                if(board[tempcol][i]==player){
                     connected++;
                     if(connected==4)return true
                     
