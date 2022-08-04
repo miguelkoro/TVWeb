@@ -77,8 +77,8 @@ class PcWave extends Border{
         ctx.beginPath();
         ctx.moveTo(this.position.x+this.width/2,this.position.y);
         ctx.strokeStyle=stringcolors[displaycolor];
-        console.log(displaycolor)
-        console.log('Azul: ' + colors[0] + ' Rojo: ' + colors[1] + ' Amarillo: ' + colors[2])
+       // console.log(displaycolor)
+        //console.log('Azul: ' + colors[0] + ' Rojo: ' + colors[1] + ' Amarillo: ' + colors[2])
         ctx.lineWidth = this.size;
         for(let i=0; i<this.position.y+this.height;i++){
             
@@ -122,7 +122,7 @@ class PcWaveBar {
             this.pointer.position.x=mousemove.x-this.pointer.width/2
             this.value = (this.max-this.min)*((mousemove.x-this.bar.position.x)/this.bar.width)
             this.value += this.min
-            console.log(this.value)
+           // console.log(this.value)
 
             //this.pointerposition=
 

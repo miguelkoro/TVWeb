@@ -97,7 +97,7 @@ class Connect4{
         if(this.winner!=0){
             this.textbg.draw();
            
-            this.winnerPlayerText.text='Jugador '+this.player;
+            this.winnerPlayerText.text='Jugador '+this.winner;
             if(this.winner==1)this.winnerPlayerText.fontcolor='#d9d141'; else this.winnerPlayerText.fontcolor='#ed6868'
             this.winnerPlayerText.write()
             this.winnerText.write()
@@ -124,22 +124,7 @@ class Connect4{
                 this.columnSelected[i][1]=false;
             }
            
-        }else if(this.mode==1){
-            if(this.player==1){
-                this.player=2
-            }else{
-                this.player=1
-            }   
-        }else{
-            if(this.player==1){
-                this.player=2
-                //cpuTurn()
-                this.putPiece(this.max(this.board, this.boardfull))
-            }else{
-                this.player=1
-            }  
         }
-
         //Comprobamos que no este ya el tablero completo
         var complete=0
         for(var i=0;i<this.numCol;i++){
@@ -154,6 +139,26 @@ class Connect4{
                 this.columnSelected[i][1]=false;
             }
         }
+
+        if(this.winner==0){
+            if(this.mode==1){
+                if(this.player==1){
+                    this.player=2
+                }else{
+                    this.player=1
+                }   
+            }else if(this.mode==2){
+                if(this.player==1){
+                    this.player=2
+                    //cpuTurn()
+                    this.cpuTurn()
+                }else{
+                    this.player=1
+                }  
+            }
+        }
+
+        
     }
 
     euristic(board, boardfull){
@@ -228,7 +233,96 @@ class Connect4{
         }
 
         //Diagonal
+        //Diagonal Abajo hacia arriba /
+        //console.log(col+' '+ row + ', ')
+        var initcol=3
+        var col= initcol
+        var row=0
+        while(initcol<=this.numCol-1){
+            //Bucle que recorra de 4 en 4
+            while(col-3>=0 && row+4<=this.numRow-1){ //comprobamos de 4 en 4
+               for(var m=row; m<4;m++){
+                    if(board[col-m][row+m]==1){
+                        player1counter++
+                        player2counter=0
+                    }else if(board[col-m][row+m]==2){
+                        player2counter++
+                        player1counter=0
+                    }else{
+                        emptycounter++
+                    }                
+                    row++
+                    col--
+                }
+            }
+            row=0
+            initcol++
+            col=initcol
+        }
+       /* if(col<=row){ //Si el numero de columna es menor que el de la fila
+            var tempcolumn=0
+            connected=0
+            for(var i=row-col;i<this.numRow;i++){
+                //console.log(column+' '+ i + ', ')
+                if(board[tempcolumn][i]==player){
+                    connected++;
+                    if(connected==4)return true
+                }else{
+                    connected=0;
+                }
+                tempcolumn++;
+            }    
+        }else{
+            var temprow=0;
+            connected=0
+            for(var i=col-row;i<this.numCol;i++){
+                //console.log(i+' '+ row + ', ')
+                if(board[i][temprow]==player){
+                    connected++;
+                    if(connected==4)return true
+                    
+                }else{ connected=0}
+                temprow++;
+            }
+        }
+        //Diagonal arriba hacia abajo \
+        if(row+col>=this.numCol){ //34-61
+            var tempcol=this.numCol-1;
+            connected=0
+            for(var i=row-(this.numCol-1-col);i<this.numRow;i++){ //Controlamos las filas
+                if(board[tempcol][i]==player){
+                    connected++;
+                    if(connected==4)return true
+                    
+                }else{ connected=0}
+                tempcol--;
+            }
 
+        }else if(row+col<this.numRow){ //04-40
+            //console.log('5')
+            var tempcol=0;
+            connected=0
+            for(var i=col+row; i>=0; i--){
+                if(board[tempcol][i]==player){
+                    connected++;
+                    if(connected==4)return true
+                    
+                }else{ connected=0}
+                tempcol++;
+            }
+        }else{ //Manejamos las filas
+            var tempcol=col+row;
+            connected=0;
+            for(var i=0;i<this.numRow;i++){
+                if(board[tempcol][i]==player){
+                    connected++;
+                    if(connected==4)return true
+                    
+                }else{ connected=0}
+                tempcol--;
+            }
+
+        }*/
 
         //Calculo
         return player2-player1
@@ -297,7 +391,7 @@ class Connect4{
                     if(newmin[1]>best[1]){  //Si el nuevo euleriano es mejor que el anterior, lo guardamos
                         best[1]=newmin[1];
                         best[0]=newmin[0]
-                        console.log('best max: ' + best)
+                        //console.log('best max: ' + best)
                     }
                 }else{
                     return i    //Si hay 4 en raya devolvemos esa columna, ya que es una victoria asegurada y no hay que seguir recorriendo la tabla
@@ -336,11 +430,15 @@ class Connect4{
     cpuTurn(){
         //si el jugador 1 hara 4 en raya, lo ponemos donde lo haria
         var checkplayer=this.checkPlayer1()
-
-        if(checkplayer<0){
+   
+        //console.log('sin 4enraya '+putpiece)
+        
+        if(checkplayer>=0){
             this.putPiece(checkplayer)
         }else{
-            this.putPiece(this.max(this.board,this.boardfull))
+            var putpiece= this.max(this.board,this.boardfull)
+            this.putPiece(putpiece)
+            
         }
     }
 

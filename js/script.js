@@ -34,7 +34,7 @@ function changeColor(){
     }else{ //Negro
         displaycolor=0
     }
-    console.log(displaycolor)
+    //console.log(displaycolor)
 }
 changeColor()
 
@@ -434,5 +434,16 @@ window.addEventListener('mousedown', function(e){
 })
 window.addEventListener('mouseup', function(e){
     mousemove.mouseDown=false
+})
+window.addEventListener('touchstart', function(e){
+    mousemove.mouseDown=true
+    console.log('start')
+})
+window.addEventListener('touchend', function(e){
+    mousemove.mouseDown=false
+    console.log('stop')
+})
+window.addEventListener('touchmove', function(e){
+    
 })
 //#endregion
