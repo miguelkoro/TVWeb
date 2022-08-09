@@ -60,6 +60,7 @@ class Border{
 }
 var border = new Border(position={x:19,y:17},174,95);
 var controlerborder =new Border(position={x:207,y:63},46,60);
+var controlerpcborder = new Border(position={x:207,y:53},46,70)
 //Funcion que me diga cuando un objeto se ha salido de la pantalla
 function offScreen(object){
     if(object.position.x>border.position.x+border.width ||
@@ -623,5 +624,6 @@ function transitionStages(){
        
 
     })
+    hashSet(); //Pones el hash de la pagina en el navegador
 }
 //#endregion

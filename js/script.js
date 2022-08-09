@@ -6,13 +6,39 @@ var bookaboutme = new BookAboutMe();
 var spacescreen= new SpaceScreen();
 var connect4 = new Connect4();
 
-
+function hashGet(){
+    switch(location.hash){
+        case '#Arcade': newstage=2; stage=2; state=0; break;
+        case '#SobreMi': newstage=100; stage=100; state=0; break;
+        case '#Connected4': newstage=101; stage=101; state=0; break;
+        case '#Space': newstage=1; stage=1; state=0; break;
+        case '#Start': newstage=0; stage=0; state=0; break;
+        case '#Pc': newstage=0; stage=0; state=1; break;
+    }
+    //console.log(location.hash)
+}
+hashGet();
+function hashSet(){
+    if(state==0){
+        switch(stage){
+            case 2: location.hash='#Arcade'; break;
+            case 100: location.hash='SobreMi'; break;
+            case 101: location.hash='Connected4'; break;
+            case 1: location.hash='Space'; break;
+            case 0: location.hash='Start'; break;
+        }
+    }else if(state==1){
+        location.hash='Pc'
+    }
+    //console.log(location.hash)
+}
+hashSet();
 
 var testtext='Lorem ipsum dolor sit amet consectetur adipiscing elit Sed felis lorem, rhoncus id accumsan id congue et justo. Fusce eget sem mollis';
 var dialogtext=new WriteParagraph(textConvert(testtext, 36),6,position={x:64,y:82}, 121,25,'black',7,true) 
 var dialog=false  
 var colors=[true,true,true]; //Azul, Rojo, Amarillo
-var stringcolors=['#292929','#274bd9','#ac3232','#ccc42d','#826fb3','#85c341','#f2a01f','#e0e0c5']  //Negro, Azul, Rojo, Amarillo, Morado, Verde, Naranja, Dorado?
+var stringcolors=['#292929','#274bd9','#ac3232','#ccc42d','#826fb3','#85c341','#f2a01f','#ffffff']  //Negro, Azul, Rojo, Amarillo, Morado, Verde, Naranja, Dorado?
 var displaycolor=7;
 
 function changeColor(){
@@ -249,6 +275,7 @@ function tvClickEvents(click){
                             document.body.style.backgroundColor = "#eae9e4";
                             state=1
                         }
+                        
                     }
                 }else{
                     if(button.column==2)button.column=0
@@ -276,7 +303,7 @@ function pcClickEvents(click) {
         
     }
     //PANEL CONTROL
-    if (mousePosition(controlerborder)) {
+    if (mousePosition(controlerpcborder)) {
         //console.log('Activo')
         //BOTON APAGADO
         if (mousePosition(pcinterface.button)) {            
@@ -298,7 +325,14 @@ function pcClickEvents(click) {
                 //console.log('fff')
             }
             //console.log('aaa')
-        }       
+        }else if(mousePosition(pcinterface.pcwavebars[2].pointer)){ //frecuencia ondas
+            if(mousemove.mouseDown){
+                pcinterface.pcwavebars[2].move()
+                pcinterface.wave.frequency=pcinterface.pcwavebars[2].value
+                //console.log('fff')
+            }
+            //console.log('aaa')
+        }         
     }
 }
 
@@ -359,7 +393,7 @@ function animate(){
   
     if(state==0) showTV();
     else if(state==1) showPC();
-    
+    //controlerpcborder.drawGrid()
 }
 animate(); 
 //#endregion
@@ -416,6 +450,7 @@ window.addEventListener('keyup',({key})=>   //Vemos que tecla se ha pulsado y le
 
 
 window.addEventListener("mousemove", function(e) { 
+    
     var rect = canvas.getBoundingClientRect(), // abs. size of element
         scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
         scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
@@ -430,20 +465,35 @@ window.addEventListener("click", function(e) {
 });
 
 window.addEventListener('mousedown', function(e){
+   // getCursorPosition(canvas,e)
     mousemove.mouseDown=true
 })
 window.addEventListener('mouseup', function(e){
     mousemove.mouseDown=false
 })
+function getCursorPosition(canvas, event) {
+    var rect = canvas.getBoundingClientRect() // abs. size of element
+   
+    mousemove.x = event.clientX - rect.left
+    mousemove.y = event.clientY - rect.top
+}
 window.addEventListener('touchstart', function(e){
     mousemove.mouseDown=true
-    console.log('start')
+    
+      
+    
+    console.log('start: '+mousemove.x + mousemove.y)
 })
 window.addEventListener('touchend', function(e){
     mousemove.mouseDown=false
     console.log('stop')
 })
 window.addEventListener('touchmove', function(e){
-    
+    var rect = canvas.getBoundingClientRect(), // abs. size of element
+        scaleX = canvas.width / rect.width,    // relationship bitmap vs. element for X
+        scaleY = canvas.height / rect.height;  // relationship bitmap vs. element for Y
+    mousemove.x=(e.clientX - rect.left) * scaleX;
+    mousemove.y=(e.clientY - rect.top) * scaleY;
+    Pointer(0);
 })
 //#endregion

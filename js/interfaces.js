@@ -135,11 +135,11 @@ class PcInterface{
     constructor(){        
         //this.button = new ImageDraw(position = { x: 210, y: 108 }, 19, 13, imgTVButton, 1, 5)
         //BOTONES E INTERFAZ DEL PC
-        this.button= new ImageDraw(position = {x:210,y:106},13,14, imgPcButton,0,1)
-        this.pcdisk= new ImageDraw(position={x:209,y:87}, 42,17,imgPcDisk)
+        this.button= new ImageDraw(position = {x:210,y:107},13,14, imgPcButton,0,1)
+        this.pcdisk= new ImageDraw(position={x:209,y:90}, 42,16,imgPcDisk)
         this.lights=[]
         for(let i=0;i<3;i++){
-            this.lights.push(new ImageDraw(position={x:233,y:106+5*i}, 4,4,imgPcLight,0,i,'',1,50))
+            this.lights.push(new ImageDraw(position={x:233,y:107+5*i}, 4,4,imgPcLight,0,i,'',1,50))
             this.lights[i].timecounter=getRndInteger(5,this.lights[i].maxtimecounter)
             this.lights[i].random.min=5; this.lights[i].random.max=50;
             this.lights[i].randomframechange=true
@@ -150,17 +150,22 @@ class PcInterface{
     //                            ]
         this.pcdisplay= new ImageDraw(position={x:211,y:10},38,55,imgPcWave)
 
-        this.wave= new PcWave(position={x:212,y:10},36,44)
+        this.wave= new PcWave(position={x:211,y:10.5},36,34.5)
         //Array de las barras para modificar la onda
-        this.pcwavebars=[new PcWaveBar(new ImageDraw(position={x:212,y:67}, 36,5,imgPcSelectorBar),
-                                        new ImageDraw(position={x:220,y:65}, 6,10,imgPcSelectorButton,0),
+        this.pcwavebars=[new PcWaveBar(new ImageDraw(position={x:212,y:59}, 36,5,imgPcSelectorBar), //Amplitud
+                                        new ImageDraw(position={x:220,y:57}, 6,10,imgPcSelectorButton,0),
                                         20,100),
-                        new PcWaveBar(new ImageDraw(position={x:212,y:78}, 36,5,imgPcSelectorBar),
-                                        new ImageDraw(position={x:235,y:76}, 6,10,imgPcSelectorButton,1),
-                                        0.05,0.25)]
+                        new PcWaveBar(new ImageDraw(position={x:212,y:70}, 36,5,imgPcSelectorBar),  //Longitud
+                                        new ImageDraw(position={x:235,y:68}, 6,10,imgPcSelectorButton,1),
+                                        0.05,0.25),
+                        new PcWaveBar(new ImageDraw(position={x:212,y:81}, 36,5,imgPcSelectorBar),  //Frecuencia
+                                        new ImageDraw(position={x:220,y:79}, 6,10,imgPcSelectorButton,2),
+                                        0.1,0.8)
+                        ]
 
         this.wave.amplitude= ((this.pcwavebars[0].max-this.pcwavebars[0].min)*((this.pcwavebars[0].pointer.position.x-this.pcwavebars[0].bar.position.x)/this.pcwavebars[0].bar.width))+this.pcwavebars[0].min
         this.wave.lenght= ((this.pcwavebars[1].max-this.pcwavebars[1].min)*((this.pcwavebars[1].pointer.position.x-this.pcwavebars[1].bar.position.x)/this.pcwavebars[1].bar.width))+this.pcwavebars[1].min
+        this.wave.frequency= ((this.pcwavebars[2].max-this.pcwavebars[2].min)*((this.pcwavebars[2].pointer.position.x-this.pcwavebars[2].bar.position.x)/this.pcwavebars[2].bar.width))+this.pcwavebars[2].min
          
 
         this.toolbar= new ImageDraw(position={x:19,y:104},175,8,imgPcToolBar)
@@ -212,13 +217,15 @@ class PcInterface{
         }) 
         this.pcdisk.draw()
         this.button.drawSprite()
+
+        this.wave.draw()
         this.pcdisplay.drawSprite()
         /*this.lights.forEach((light)=>{
             light.drawAnimatedSprite()
         })*/
         this.showLights()
        // this.wave.drawGrid()
-        this.wave.draw()
+        
 
         
     }
