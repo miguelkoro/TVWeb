@@ -1,5 +1,7 @@
 class Arcade{
     constructor(){
+        this.room=0
+        this.numrooms=1 //sustituir por un array
         this.machines = [new ImageDraw(position={x:35,y:47},37,62,imgArcadeMachines,0,0),
                         new ImageDraw(position={x:79,y:47},37,62,imgArcadeMachines,1,0),
                         new ImageDraw(position={x:140,y:47},37,62,imgArcadeMachines,2,0)]

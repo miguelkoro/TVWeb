@@ -61,6 +61,27 @@ class PcWindowExplorer extends ImageDraw{
     }
 }
 
+class Program{
+    constructor(){
+
+    }
+    drawFrame(){
+
+    }
+}
+
+class ThreeProgram extends Program{
+    constructor(){
+
+    }
+    load(){
+        
+    }
+    draw(){
+        this.drawFrame()
+    }
+}
+
 
 class PcWave extends Border{
     constructor(position, width, height){
@@ -187,7 +208,7 @@ class PcInterface{
         this.trashicon = new ImageDraw(position={x:23,y:21},15,13,imgPcIcons,0,3)
         this.foldericon = new ImageDraw(position={x:45,y:21}, 15,13, imgPcIcons,0,0)
         this.date=new Date()
-        this.clock= new WriteText(position={x:186,y:108},50,100,'',4,'bold')
+        this.clock= new WriteText(position={x:184.5,y:109.5},50,100,'',4,'bold')
     }
     draw(){        
         ctx.drawImage(imgPcWall, border.position.x, border.position.y);

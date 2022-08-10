@@ -235,7 +235,7 @@ class Connect4{
         //Diagonal
         //Diagonal Abajo hacia arriba /
         //console.log(col+' '+ row + ', ')
-        var initcol=3
+       /* var initcol=3
         var col= initcol
         var row=0
         while(initcol<=this.numCol-1){
@@ -258,7 +258,7 @@ class Connect4{
             row=0
             initcol++
             col=initcol
-        }
+        }*/
        /* if(col<=row){ //Si el numero de columna es menor que el de la fila
             var tempcolumn=0
             connected=0
