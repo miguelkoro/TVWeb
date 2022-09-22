@@ -63,7 +63,7 @@ class PcWindowExplorer extends ImageDraw{
 
 
 
-class ThreeProgram extends Program{
+/*class ThreeProgram extends Program{
     constructor(){
 
     }
@@ -73,7 +73,7 @@ class ThreeProgram extends Program{
     draw(){
         this.drawFrame()
     }
-}
+}*/
 
 
 class PcWave extends Border{
