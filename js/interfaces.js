@@ -37,7 +37,7 @@ class TvInterface{
         ctx.drawImage(imgTVCover, 211*screenSize.multiplier, 10*screenSize.multiplier);
     }
 }
-
+//Barra de inicio
 class PcWindowExplorer extends ImageDraw{
     constructor(position, width, height, image){
         super(position,width,height, image)
@@ -61,14 +61,7 @@ class PcWindowExplorer extends ImageDraw{
     }
 }
 
-class Program{
-    constructor(){
 
-    }
-    drawFrame(){
-
-    }
-}
 
 class ThreeProgram extends Program{
     constructor(){
@@ -165,10 +158,7 @@ class PcInterface{
             this.lights[i].random.min=5; this.lights[i].random.max=50;
             this.lights[i].randomframechange=true
         }
-       // this.pcselectbar = [,
-     //                       ]
-     //   this.pcselectpointer = [,
-    //                            ]
+
         this.pcdisplay= new ImageDraw(position={x:211,y:10},38,55,imgPcWave)
 
         this.wave= new PcWave(position={x:211,y:10.5},36,34.5)
@@ -199,7 +189,12 @@ class PcInterface{
        
 
         //ESCRITORIO
+        //Crear array con las posiciones (GRID) de posibles iconos
+        this.desktopGrid=[]
+        //this.desktopGrid.foreach
         this.desktopicons=[]
+
+        this.sortAlgorithm= new SortAlgorithms("Sort Algorithms")   //Programa de algoritmos de ordenacion
 
         this.windowexplorer= new PcWindowExplorer(position={x:43,y:19},175,96,imgPcWindow)
         this.windowinternet= new PcWindowExplorer(position={x:43,y:19},175,96,imgPcWindow)
@@ -208,7 +203,7 @@ class PcInterface{
         this.trashicon = new ImageDraw(position={x:23,y:21},15,13,imgPcIcons,0,3)
         this.foldericon = new ImageDraw(position={x:45,y:21}, 15,13, imgPcIcons,0,0)
         this.date=new Date()
-        this.clock= new WriteText(position={x:184.5,y:109.5},50,100,'',4,'bold')
+        this.clock= new WriteText(position={x:185.5,y:108.5},50,100,'',4,'bold')
     }
     draw(){        
         ctx.drawImage(imgPcWall, border.position.x, border.position.y);
@@ -225,6 +220,8 @@ class PcInterface{
         this.programs.forEach((program)=>{
 
         })
+        this.sortAlgorithm.drawProgram();
+
         this.windowexplorer.showMinimized()
 
         if(this.showtoolbarscreen)this.toolbarscreen.draw()

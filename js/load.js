@@ -37,10 +37,12 @@ class Border{
         this.width=sizeConverter(width);   //La altura y la anchura seran la diferencia de los puntos
         this.height=sizeConverter(height);
         this.center={x:this.position.x+this.width/2,y:this.position.y+this.height/2}
+        this.color='black'
+        this.lineWidth=sizeConverter(1)
     }
 
     drawGrid(color){
-        ctx.fillStyle=color;
+        ctx.fillStyle=this.color;
         for(let i=0;i<=50;i++){            
             ctx.fillRect(this.position.x+i*(this.width/50), this.position.y, 1,this.height);  //Verticales
         }
@@ -56,6 +58,14 @@ class Border{
             return true
         else
             return false
+    }
+
+    drawRectangle(){
+        ctx.fillStyle=this.color
+        ctx.fillRect(this.position.x, this.position.y, this.lineWidth,this.height);
+        ctx.fillRect(this.position.x+this.width, this.position.y, this.lineWidth,this.height);
+        ctx.fillRect(this.position.x, this.position.y, this.width,this.lineWidth);
+        ctx.fillRect(this.position.x, this.position.y+this.height, this.width,this.lineWidth);
     }
 }
 var border = new Border(position={x:19,y:17},174,95);
@@ -520,7 +530,8 @@ var imgPcToolBar = createImages('img/pc/BarraTareas');
 var imgPcScreen = createImages('img/pc/PantallaWindows');
 var imgPcToolBarScreen = createImages('img/pc/InicioWindows');
 var imgPcIcons = createImages('img/pc/IconosPc');
-var imgPcWindow = createImages('img/pc/PantallaWindows');
+//var imgPcWindow = createImages('img/pc/PantallaWindows');
+var imgPcWindow = createImages('img/pc/pcwindow');
 var imgPcExplorerIcon = createImages('img/pc/explorerIcons');
 var imgPcDisk = createImages('img/pc/Disquetera');
 var imgPcLight = createImages('img/pc/PcLights');
