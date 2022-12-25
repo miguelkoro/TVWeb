@@ -63,9 +63,14 @@ class Border{
     drawRectangle(){
         ctx.fillStyle=this.color
         ctx.fillRect(this.position.x, this.position.y, this.lineWidth,this.height);
-        ctx.fillRect(this.position.x+this.width, this.position.y, this.lineWidth,this.height);
+        ctx.fillRect(this.position.x+this.width, this.position.y, this.lineWidth,this.height+this.lineWidth);
         ctx.fillRect(this.position.x, this.position.y, this.width,this.lineWidth);
-        ctx.fillRect(this.position.x, this.position.y+this.height, this.width,this.lineWidth);
+        ctx.fillRect(this.position.x, this.position.y+this.height, this.width+this.lineWidth,this.lineWidth);
+    }
+
+    fillBorder(color){
+        ctx.fillStyle=color
+        ctx.fillRect(this.position.x, this.position.y, this.width,this.height);
     }
 }
 var border = new Border(position={x:19,y:17},174,95);
@@ -635,6 +640,6 @@ function transitionStages(){
        
 
     })
-    hashSet(); //Pones el hash de la pagina en el navegador
+    //hashSet(); //Pones el hash de la pagina en el navegador
 }
 //#endregion
