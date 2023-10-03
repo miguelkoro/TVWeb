@@ -635,6 +635,6 @@ function transitionStages(){
        
 
     })
-    hashSet(); //Pones el hash de la pagina en el navegador
+    //hashSet(); //Pones el hash de la pagina en el navegador
 }
 //#endregion

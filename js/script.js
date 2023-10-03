@@ -6,7 +6,7 @@ var bookaboutme = new BookAboutMe();
 var spacescreen= new SpaceScreen();
 var connect4 = new Connect4();
 
-function hashGet(){
+/*function hashGet(){
     switch(location.hash){
         case '#Arcade': newstage=2; stage=2; state=0; break;
         case '#SobreMi': newstage=100; stage=100; state=0; break;
@@ -32,7 +32,7 @@ function hashSet(){
     }
     //console.log(location.hash)
 }
-hashSet();
+hashSet();*/
 
 var testtext='Lorem ipsum dolor sit amet consectetur adipiscing elit Sed felis lorem, rhoncus id accumsan id congue et justo. Fusce eget sem mollis';
 var dialogtext=new WriteParagraph(textConvert(testtext, 36),6,position={x:64,y:82}, 121,25,'black',7,true) 
