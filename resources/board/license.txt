@@ -1,0 +1,11 @@
+Model Information:
+* title:	Low Poly Notice Board
+* source:	https://sketchfab.com/3d-models/low-poly-notice-board-7054cc045dd04d79bb76e158803e9b47
+* author:	StaticBuffering (https://sketchfab.com/StaticBuffering)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low Poly Notice Board" (https://sketchfab.com/3d-models/low-poly-notice-board-7054cc045dd04d79bb76e158803e9b47) by StaticBuffering (https://sketchfab.com/StaticBuffering) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
