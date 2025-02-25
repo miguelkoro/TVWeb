@@ -220,7 +220,7 @@ class PcInterface{
         this.programs.forEach((program)=>{
 
         })
-        this.sortAlgorithm.drawProgram();
+        //this.sortAlgorithm.drawProgram();
 
         this.windowexplorer.showMinimized()
 
